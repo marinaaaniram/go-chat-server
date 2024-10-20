@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package chat_v1;
 
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 option go_package = "github.com/marinaaaniram/go-chat-server/pkg/chat_v1;chat_v1";
@@ -26,8 +25,6 @@ message DeleteRequest {
 }
 
 message SendMessageRequest {
-  int64 id = 1;
-  string from = 2;
-  string text = 3;
-  google.protobuf.Timestamp timestamp = 4;
+  string text = 2;
+  string sent_by = 3;
 }
