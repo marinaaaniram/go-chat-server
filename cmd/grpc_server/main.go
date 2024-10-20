@@ -7,6 +7,7 @@ import (
 	"net"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -14,7 +15,6 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"github.com/jackc/pgx/v4/pgxpool"
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 )
 
@@ -57,8 +57,8 @@ func main() {
 	}
 }
 
-// Create - create chat
-func (s *server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
+// CreateChat - create chat
+func (s *server) CreateChat(ctx context.Context, req *desc.CreateChatRequest) (*desc.CreateChatResponse, error) {
 	builderInsert := sq.Insert("chat").
 		PlaceholderFormat(sq.Dollar).
 		Columns("usernames").
@@ -78,13 +78,13 @@ func (s *server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.Cre
 
 	log.Printf("Created chat with id: %d", chatID)
 
-	return &desc.CreateResponse{
+	return &desc.CreateChatResponse{
 		Id: int64(chatID),
 	}, nil
 }
 
-// Delete - delete chat by id
-func (s *server) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
+// DeleteChat - delete chat by id
+func (s *server) DeleteChat(ctx context.Context, req *desc.DeleteChatRequest) (*emptypb.Empty, error) {
 	builderSelect := sq.Select("COUNT(*)").
 		From("chat").
 		PlaceholderFormat(sq.Dollar).
@@ -128,8 +128,8 @@ func (s *server) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.
 func (s *server) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
 	builderInsert := sq.Insert("message").
 		PlaceholderFormat(sq.Dollar).
-		Columns("text", "sent_by").
-		Values(req.GetText(), req.GetSentBy()).
+		Columns("chat_id", "sent_by", "text").
+		Values(req.GetChatId(), req.GetSentBy(), req.GetText()).
 		Suffix("RETURNING id")
 
 	query, args, err := builderInsert.ToSql()
