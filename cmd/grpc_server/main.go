@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"flag"
 	"log"
 	"net"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 	"google.golang.org/grpc"
@@ -15,13 +16,15 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/marinaaaniram/go-chat-server/internal/config"
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 )
 
-const (
-	grpcPort = 50051
-	dbDSN    = "host=localhost port=54321 dbname=postgres user=postgres password=postgres sslmode=disable"
-)
+var configPath string
+
+func init() {
+	flag.StringVar(&configPath, "config-path", ".env", "path to config file")
+}
 
 type server struct {
 	desc.UnimplementedChatV1Server
@@ -29,9 +32,25 @@ type server struct {
 }
 
 func main() {
+	flag.Parse()
 	ctx := context.Background()
 
-	pool, err := pgxpool.Connect(ctx, dbDSN)
+	err := config.Load(configPath)
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
+
+	grpcConfig, err := config.NewGRPCConfig()
+	if err != nil {
+		log.Fatalf("failed to get grpc config: %v", err)
+	}
+
+	pgConfig, err := config.NewPGConfig()
+	if err != nil {
+		log.Fatalf("failed to get pg config: %v", err)
+	}
+
+	pool, err := pgxpool.Connect(ctx, pgConfig.DSN())
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -41,7 +60,7 @@ func main() {
 		pool: pool,
 	}
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
+	lis, err := net.Listen("tcp", grpcConfig.Address())
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
@@ -140,7 +159,11 @@ func (s *server) SendMessage(ctx context.Context, req *desc.SendMessageRequest) 
 	var messageId int
 	err = s.pool.QueryRow(ctx, query, args...).Scan(&messageId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to insert message: %v", err)
+		if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == "23503" {
+			return nil, status.Errorf(codes.InvalidArgument, "Chat with id %d not found", req.GetChatId())
+		} else {
+			return nil, status.Errorf(codes.Internal, "Failed to insert message: %v", err)
+		}
 	}
 
 	log.Printf("Sent message with id: %d", messageId)
