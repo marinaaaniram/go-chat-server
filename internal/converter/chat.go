@@ -21,13 +21,13 @@ func FromChatToDesc(chat *model.Chat) *desc.Chat {
 	}
 }
 
-func FromDescCreateToChat(req *desc.CreateChatRequest) *model.Chat {
+func FromDescCreateToChat(req *desc.CreateRequest) *model.Chat {
 	return &model.Chat{
 		Usernames: req.GetUsernames(),
 	}
 }
 
-func FromDescDeleteToChat(req *desc.DeleteChatRequest) *model.Chat {
+func FromDescDeleteToChat(req *desc.DeleteRequest) *model.Chat {
 	return &model.Chat{
 		ID: req.GetId(),
 	}

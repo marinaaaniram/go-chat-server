@@ -9,16 +9,16 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/protobuf/types/known/emptypb"
 
+	chatAPI "github.com/marinaaaniram/go-chat-server/internal/api/chat"
+	messageAPI "github.com/marinaaaniram/go-chat-server/internal/api/message"
 	"github.com/marinaaaniram/go-chat-server/internal/config"
-	"github.com/marinaaaniram/go-chat-server/internal/converter"
 	chatRepository "github.com/marinaaaniram/go-chat-server/internal/repository/chat"
 	messageRepository "github.com/marinaaaniram/go-chat-server/internal/repository/message"
-	"github.com/marinaaaniram/go-chat-server/internal/service"
 	chatService "github.com/marinaaaniram/go-chat-server/internal/service/chat"
 	messageService "github.com/marinaaaniram/go-chat-server/internal/service/message"
-	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
+	descChat_v1 "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
+	descMessage_v1 "github.com/marinaaaniram/go-chat-server/pkg/message_v1"
 )
 
 var configPath string
@@ -27,11 +27,12 @@ func init() {
 	flag.StringVar(&configPath, "config-path", ".env", "path to config file")
 }
 
-type server struct {
-	desc.UnimplementedChatV1Server
-	chatService    service.ChatService
-	messageService service.MessageService
-}
+// type server struct {
+// 	descChat_v1.UnimplementedChatV1Server
+// 	descMessage_v1.UnimplementedMessageV1Server
+// 	chatService    service.ChatService
+// 	messageService service.MessageService
+// }
 
 func main() {
 	flag.Parse()
@@ -71,41 +72,13 @@ func main() {
 
 	s := grpc.NewServer()
 	reflection.Register(s)
-	desc.RegisterChatV1Server(s, &server{chatService: chatSrv, messageService: messageSrv})
+
+	descChat_v1.RegisterChatV1Server(s, chatAPI.NewImplementation(chatSrv))
+	descMessage_v1.RegisterMessageV1Server(s, messageAPI.NewImplementation(messageSrv))
 
 	log.Printf("Server listening at %v", lis.Addr())
 
 	if err = s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
-}
-
-// CreateChat - create chat
-func (s *server) CreateChat(ctx context.Context, req *desc.CreateChatRequest) (*desc.CreateChatResponse, error) {
-	chatDesc, err := s.chatService.Create(ctx, converter.FromDescCreateToChat(req))
-	if err != nil {
-		return nil, err
-	}
-
-	return &desc.CreateChatResponse{
-		Chat: chatDesc,
-	}, nil
-}
-
-// DeleteChat - delete chat by id
-func (s *server) DeleteChat(ctx context.Context, req *desc.DeleteChatRequest) (*emptypb.Empty, error) {
-	err := s.chatService.Delete(ctx, converter.FromDescDeleteToChat(req))
-	if err != nil {
-		return nil, err
-	}
-	return &emptypb.Empty{}, nil
-}
-
-// SendMessage - send message to chat
-func (s *server) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
-	err := s.messageService.SendMessage(ctx, converter.FromDescToMessage(req))
-	if err != nil {
-		return nil, err
-	}
-	return &emptypb.Empty{}, nil
 }
