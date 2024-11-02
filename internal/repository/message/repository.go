@@ -34,7 +34,7 @@ func NewRepository(db *pgxpool.Pool) repository.MessageRepository {
 	return &repo{db: db}
 }
 
-func (r *repo) SendMessage(ctx context.Context, message *model.Message) error {
+func (r *repo) Send(ctx context.Context, message *model.Message) error {
 	builderInsert := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(chatId, sentBy, text).

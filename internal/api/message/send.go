@@ -9,8 +9,8 @@ import (
 	desc "github.com/marinaaaniram/go-chat-server/pkg/message_v1"
 )
 
-func (i *Implementation) SendMessage(ctx context.Context, req *desc.SendRequest) (*emptypb.Empty, error) {
-	err := i.messageService.SendMessage(ctx, converter.FromDescToMessage(req))
+func (i *Implementation) Send(ctx context.Context, req *desc.SendRequest) (*emptypb.Empty, error) {
+	err := i.messageService.Send(ctx, converter.FromDescToMessage(req))
 	if err != nil {
 		return nil, err
 	}
