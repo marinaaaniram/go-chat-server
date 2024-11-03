@@ -4,10 +4,11 @@ import (
 	"context"
 	"log"
 
-	"github.com/jackc/pgx/v4/pgxpool"
-
 	"github.com/marinaaaniram/go-chat-server/internal/api/chat"
 	"github.com/marinaaaniram/go-chat-server/internal/api/message"
+	"github.com/marinaaaniram/go-chat-server/internal/client/db"
+	"github.com/marinaaaniram/go-chat-server/internal/client/db/pg"
+	"github.com/marinaaaniram/go-chat-server/internal/client/db/transaction"
 	"github.com/marinaaaniram/go-chat-server/internal/closer"
 	"github.com/marinaaaniram/go-chat-server/internal/config"
 	"github.com/marinaaaniram/go-chat-server/internal/repository"
@@ -22,7 +23,8 @@ type serviceProvider struct {
 	pgConfig   config.PGConfig
 	grpcConfig config.GRPCConfig
 
-	pgPool            *pgxpool.Pool
+	dbClient          db.Client
+	txManager         db.TxManager
 	chatRepository    repository.ChatRepository
 	messageRepository repository.MessageRepository
 
@@ -63,31 +65,36 @@ func (s *serviceProvider) GetGRPCConfig() config.GRPCConfig {
 	return s.grpcConfig
 }
 
-func (s *serviceProvider) GetPgPool(ctx context.Context) *pgxpool.Pool {
-	if s.pgPool == nil {
-		pool, err := pgxpool.Connect(ctx, s.GetPGConfig().DSN())
+func (s *serviceProvider) DBClient(ctx context.Context) db.Client {
+	if s.dbClient == nil {
+		cl, err := pg.New(ctx, s.GetPGConfig().DSN())
 		if err != nil {
-			log.Fatalf("failed to connect to database: %v", err)
+			log.Fatalf("failed to create db client: %v", err)
 		}
 
-		err = pool.Ping(ctx)
+		err = cl.DB().Ping(ctx)
 		if err != nil {
 			log.Fatalf("ping error: %s", err.Error())
 		}
-		closer.Add(func() error {
-			pool.Close()
-			return nil
-		})
+		closer.Add(cl.Close)
 
-		s.pgPool = pool
+		s.dbClient = cl
 	}
 
-	return s.pgPool
+	return s.dbClient
+}
+
+func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
+	if s.txManager == nil {
+		s.txManager = transaction.NewTransactionManager(s.DBClient(ctx).DB())
+	}
+
+	return s.txManager
 }
 
 func (s *serviceProvider) GetChatRepository(ctx context.Context) repository.ChatRepository {
 	if s.chatRepository == nil {
-		s.chatRepository = chatRepository.NewRepository(s.GetPgPool(ctx))
+		s.chatRepository = chatRepository.NewRepository(s.DBClient(ctx))
 	}
 
 	return s.chatRepository
@@ -111,7 +118,7 @@ func (s *serviceProvider) GetChatImpl(ctx context.Context) *chat.Implementation 
 
 func (s *serviceProvider) GetMessageRepository(ctx context.Context) repository.MessageRepository {
 	if s.messageRepository == nil {
-		s.messageRepository = messageRepository.NewRepository(s.GetPgPool(ctx))
+		s.messageRepository = messageRepository.NewRepository(s.DBClient(ctx))
 	}
 
 	return s.messageRepository

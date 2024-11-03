@@ -6,10 +6,10 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4/pgxpool"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/marinaaaniram/go-chat-server/internal/client/db"
 	"github.com/marinaaaniram/go-chat-server/internal/model"
 	"github.com/marinaaaniram/go-chat-server/internal/repository"
 	modelRepo "github.com/marinaaaniram/go-chat-server/internal/repository/message/model"
@@ -27,10 +27,10 @@ const (
 )
 
 type repo struct {
-	db *pgxpool.Pool
+	db db.Client
 }
 
-func NewRepository(db *pgxpool.Pool) repository.MessageRepository {
+func NewRepository(db db.Client) repository.MessageRepository {
 	return &repo{db: db}
 }
 
@@ -46,8 +46,13 @@ func (r *repo) Send(ctx context.Context, message *model.Message) error {
 		return status.Errorf(codes.Internal, "Failed to build query: %v", err)
 	}
 
+	q := db.Query{
+		Name:     "message_repository.Send",
+		QueryRaw: query,
+	}
+
 	var messageRepo modelRepo.Message
-	err = r.db.QueryRow(ctx, query, args...).Scan(&messageRepo.ID)
+	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&messageRepo.ID)
 	if err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == "23503" {
 			return status.Errorf(codes.InvalidArgument, "Chat with id %d not found or %v", message.ChatId, err)

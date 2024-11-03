@@ -6,11 +6,11 @@ import (
 	"log"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/marinaaaniram/go-chat-server/internal/client/db"
 	"github.com/marinaaaniram/go-chat-server/internal/model"
 	"github.com/marinaaaniram/go-chat-server/internal/repository"
 	converterRepo "github.com/marinaaaniram/go-chat-server/internal/repository/chat/converter"
@@ -27,10 +27,10 @@ const (
 )
 
 type repo struct {
-	db *pgxpool.Pool
+	db db.Client
 }
 
-func NewRepository(db *pgxpool.Pool) repository.ChatRepository {
+func NewRepository(db db.Client) repository.ChatRepository {
 	return &repo{db: db}
 }
 
@@ -46,8 +46,13 @@ func (r *repo) Create(ctx context.Context, chat *model.Chat) (*model.Chat, error
 		return nil, status.Errorf(codes.Internal, "Failed to build query: %v", err)
 	}
 
+	q := db.Query{
+		Name:     "chat_repository.Create",
+		QueryRaw: query,
+	}
+
 	var repoChat modelRepo.Chat
-	err = r.db.QueryRow(ctx, query, args...).Scan(&repoChat.ID, &repoChat.Usernames, &repoChat.CreatedAt, &repoChat.UpdatedAt)
+	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&repoChat.ID, &repoChat.Usernames, &repoChat.CreatedAt, &repoChat.UpdatedAt)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to insert chat: %v", err)
 	}
@@ -66,8 +71,13 @@ func (r *repo) Delete(ctx context.Context, chat *model.Chat) error {
 		return status.Errorf(codes.Internal, "Failed to build select query: %v", err)
 	}
 
+	selectQ := db.Query{
+		Name:     "chat_repository.SelectId",
+		QueryRaw: selectQuery,
+	}
+
 	var count int
-	err = r.db.QueryRow(ctx, selectQuery, args...).Scan(&count)
+	err = r.db.DB().QueryRowContext(ctx, selectQ, args...).Scan(&count)
 	if err != nil {
 		return status.Errorf(codes.Internal, "Failed to select chat: %v", err)
 	}
@@ -85,7 +95,12 @@ func (r *repo) Delete(ctx context.Context, chat *model.Chat) error {
 		return status.Errorf(codes.Internal, "Failed to build delete query: %v", err)
 	}
 
-	_, err = r.db.Exec(ctx, query, args...)
+	q := db.Query{
+		Name:     "chat_repository.Delete",
+		QueryRaw: query,
+	}
+
+	_, err = r.db.DB().ExecContext(ctx, q, args...)
 	if err != nil {
 		return status.Errorf(codes.Internal, "Failed to delete chat: %v", err)
 	}
