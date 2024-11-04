@@ -10,6 +10,7 @@ type Implementation struct {
 	chatService service.ChatService
 }
 
+// Create Chat implementation
 func NewImplementation(chatService service.ChatService) *Implementation {
 	return &Implementation{
 		chatService: chatService,

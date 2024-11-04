@@ -9,6 +9,7 @@ type serv struct {
 	messageRepository repository.MessageRepository
 }
 
+// Create Message service
 func NewService(messageRepository repository.MessageRepository) service.MessageService {
 	return &serv{
 		messageRepository: messageRepository,

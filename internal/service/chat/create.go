@@ -8,6 +8,7 @@ import (
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 )
 
+// Create chat in service layer
 func (s *serv) Create(ctx context.Context, chat *model.Chat) (*desc.Chat, error) {
 	chatObj, err := s.chatRepository.Create(ctx, chat)
 	if err != nil {

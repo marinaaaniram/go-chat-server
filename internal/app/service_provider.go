@@ -39,6 +39,7 @@ func newServiceProvider() *serviceProvider {
 	return &serviceProvider{}
 }
 
+// Get postgres config
 func (s *serviceProvider) GetPGConfig() config.PGConfig {
 	if s.pgConfig == nil {
 		cfg, err := config.NewPGConfig()
@@ -52,6 +53,7 @@ func (s *serviceProvider) GetPGConfig() config.PGConfig {
 	return s.pgConfig
 }
 
+// Get GRPC config
 func (s *serviceProvider) GetGRPCConfig() config.GRPCConfig {
 	if s.grpcConfig == nil {
 		cfg, err := config.NewGRPCConfig()
@@ -65,6 +67,7 @@ func (s *serviceProvider) GetGRPCConfig() config.GRPCConfig {
 	return s.grpcConfig
 }
 
+// Init db client
 func (s *serviceProvider) DBClient(ctx context.Context) db.Client {
 	if s.dbClient == nil {
 		cl, err := pg.New(ctx, s.GetPGConfig().DSN())
@@ -84,6 +87,7 @@ func (s *serviceProvider) DBClient(ctx context.Context) db.Client {
 	return s.dbClient
 }
 
+// Init db transactions manager
 func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 	if s.txManager == nil {
 		s.txManager = transaction.NewTransactionManager(s.DBClient(ctx).DB())
@@ -92,6 +96,7 @@ func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 	return s.txManager
 }
 
+// Init Chat repository
 func (s *serviceProvider) GetChatRepository(ctx context.Context) repository.ChatRepository {
 	if s.chatRepository == nil {
 		s.chatRepository = chatRepository.NewRepository(s.DBClient(ctx))
@@ -100,6 +105,7 @@ func (s *serviceProvider) GetChatRepository(ctx context.Context) repository.Chat
 	return s.chatRepository
 }
 
+// Init Chat service
 func (s *serviceProvider) GetChatService(ctx context.Context) service.ChatService {
 	if s.chatService == nil {
 		s.chatService = chatService.NewService(s.GetChatRepository(ctx))
@@ -108,6 +114,7 @@ func (s *serviceProvider) GetChatService(ctx context.Context) service.ChatServic
 	return s.chatService
 }
 
+// Init Chat implementaion
 func (s *serviceProvider) GetChatImpl(ctx context.Context) *chat.Implementation {
 	if s.chatImpl == nil {
 		s.chatImpl = chat.NewImplementation(s.GetChatService(ctx))
@@ -116,6 +123,7 @@ func (s *serviceProvider) GetChatImpl(ctx context.Context) *chat.Implementation 
 	return s.chatImpl
 }
 
+// Init Message repository
 func (s *serviceProvider) GetMessageRepository(ctx context.Context) repository.MessageRepository {
 	if s.messageRepository == nil {
 		s.messageRepository = messageRepository.NewRepository(s.DBClient(ctx))
@@ -124,6 +132,7 @@ func (s *serviceProvider) GetMessageRepository(ctx context.Context) repository.M
 	return s.messageRepository
 }
 
+// Init Message service
 func (s *serviceProvider) GetMessageService(ctx context.Context) service.MessageService {
 	if s.messageService == nil {
 		s.messageService = messageService.NewService(s.GetMessageRepository(ctx))
@@ -132,6 +141,7 @@ func (s *serviceProvider) GetMessageService(ctx context.Context) service.Message
 	return s.messageService
 }
 
+// Init Message implementaion
 func (s *serviceProvider) GetMessageImpl(ctx context.Context) *message.Implementation {
 	if s.messageImpl == nil {
 		s.messageImpl = message.NewImplementation(s.GetMessageService(ctx))

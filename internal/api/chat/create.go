@@ -7,6 +7,7 @@ import (
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 )
 
+// Create Chat in desc layer
 func (i *Implementation) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
 	chatDesc, err := i.chatService.Create(ctx, converter.FromDescCreateToChat(req))
 	if err != nil {

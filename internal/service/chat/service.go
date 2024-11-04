@@ -9,6 +9,7 @@ type serv struct {
 	chatRepository repository.ChatRepository
 }
 
+// Create Chat service
 func NewService(chatRepository repository.ChatRepository) service.ChatService {
 	return &serv{
 		chatRepository: chatRepository,

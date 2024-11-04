@@ -20,6 +20,7 @@ type App struct {
 	grpcServer      *grpc.Server
 }
 
+// Create app
 func NewApp(ctx context.Context) (*App, error) {
 	a := &App{}
 
@@ -31,6 +32,7 @@ func NewApp(ctx context.Context) (*App, error) {
 	return a, nil
 }
 
+// Run
 func (a *App) Run() error {
 	defer func() {
 		closer.CloseAll()
@@ -40,6 +42,7 @@ func (a *App) Run() error {
 	return a.runGRPCServer()
 }
 
+// Init deps
 func (a *App) initDeps(ctx context.Context) error {
 	inits := []func(context.Context) error{
 		a.initConfig,
@@ -57,6 +60,7 @@ func (a *App) initDeps(ctx context.Context) error {
 	return nil
 }
 
+// Init config
 func (a *App) initConfig(_ context.Context) error {
 	err := config.Load(".env")
 	if err != nil {
@@ -66,11 +70,13 @@ func (a *App) initConfig(_ context.Context) error {
 	return nil
 }
 
+// Init service provider
 func (a *App) initServiceProvider(_ context.Context) error {
 	a.serviceProvider = newServiceProvider()
 	return nil
 }
 
+// Init GRPC server
 func (a *App) initGRPCServer(ctx context.Context) error {
 	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
 
@@ -82,6 +88,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 	return nil
 }
 
+// Run GRPC server
 func (a *App) runGRPCServer() error {
 	log.Printf("GRPC server is running on %s", a.serviceProvider.GetGRPCConfig().Address())
 
