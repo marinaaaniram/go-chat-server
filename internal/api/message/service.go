@@ -11,7 +11,7 @@ type Implementation struct {
 }
 
 // Create Message implementation
-func NewImplementation(messageService service.MessageService) *Implementation {
+func NewMessageImplementation(messageService service.MessageService) *Implementation {
 	return &Implementation{
 		messageService: messageService,
 	}

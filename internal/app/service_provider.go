@@ -99,7 +99,7 @@ func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 // Init Chat repository
 func (s *serviceProvider) GetChatRepository(ctx context.Context) repository.ChatRepository {
 	if s.chatRepository == nil {
-		s.chatRepository = chatRepository.NewRepository(s.DBClient(ctx))
+		s.chatRepository = chatRepository.NewChatRepository(s.DBClient(ctx))
 	}
 
 	return s.chatRepository
@@ -108,7 +108,7 @@ func (s *serviceProvider) GetChatRepository(ctx context.Context) repository.Chat
 // Init Chat service
 func (s *serviceProvider) GetChatService(ctx context.Context) service.ChatService {
 	if s.chatService == nil {
-		s.chatService = chatService.NewService(s.GetChatRepository(ctx))
+		s.chatService = chatService.NewChatService(s.GetChatRepository(ctx))
 	}
 
 	return s.chatService
@@ -117,7 +117,7 @@ func (s *serviceProvider) GetChatService(ctx context.Context) service.ChatServic
 // Init Chat implementaion
 func (s *serviceProvider) GetChatImpl(ctx context.Context) *chat.Implementation {
 	if s.chatImpl == nil {
-		s.chatImpl = chat.NewImplementation(s.GetChatService(ctx))
+		s.chatImpl = chat.NewChatImplementation(s.GetChatService(ctx))
 	}
 
 	return s.chatImpl
@@ -126,7 +126,7 @@ func (s *serviceProvider) GetChatImpl(ctx context.Context) *chat.Implementation 
 // Init Message repository
 func (s *serviceProvider) GetMessageRepository(ctx context.Context) repository.MessageRepository {
 	if s.messageRepository == nil {
-		s.messageRepository = messageRepository.NewRepository(s.DBClient(ctx))
+		s.messageRepository = messageRepository.NewMessageRepository(s.DBClient(ctx))
 	}
 
 	return s.messageRepository
@@ -135,7 +135,7 @@ func (s *serviceProvider) GetMessageRepository(ctx context.Context) repository.M
 // Init Message service
 func (s *serviceProvider) GetMessageService(ctx context.Context) service.MessageService {
 	if s.messageService == nil {
-		s.messageService = messageService.NewService(s.GetMessageRepository(ctx))
+		s.messageService = messageService.NewMessageService(s.GetMessageRepository(ctx))
 	}
 
 	return s.messageService
@@ -144,7 +144,7 @@ func (s *serviceProvider) GetMessageService(ctx context.Context) service.Message
 // Init Message implementaion
 func (s *serviceProvider) GetMessageImpl(ctx context.Context) *message.Implementation {
 	if s.messageImpl == nil {
-		s.messageImpl = message.NewImplementation(s.GetMessageService(ctx))
+		s.messageImpl = message.NewMessageImplementation(s.GetMessageService(ctx))
 	}
 
 	return s.messageImpl

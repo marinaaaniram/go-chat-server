@@ -10,7 +10,7 @@ type serv struct {
 }
 
 // Create Message service
-func NewService(messageRepository repository.MessageRepository) service.MessageService {
+func NewMessageService(messageRepository repository.MessageRepository) service.MessageService {
 	return &serv{
 		messageRepository: messageRepository,
 	}

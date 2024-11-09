@@ -19,6 +19,6 @@ type repo struct {
 }
 
 // Create Chat repository
-func NewRepository(db db.Client) repository.ChatRepository {
+func NewChatRepository(db db.Client) repository.ChatRepository {
 	return &repo{db: db}
 }

@@ -11,7 +11,7 @@ type Implementation struct {
 }
 
 // Create Chat implementation
-func NewImplementation(chatService service.ChatService) *Implementation {
+func NewChatImplementation(chatService service.ChatService) *Implementation {
 	return &Implementation{
 		chatService: chatService,
 	}

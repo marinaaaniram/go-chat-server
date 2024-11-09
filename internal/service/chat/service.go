@@ -10,7 +10,7 @@ type serv struct {
 }
 
 // Create Chat service
-func NewService(chatRepository repository.ChatRepository) service.ChatService {
+func NewChatService(chatRepository repository.ChatRepository) service.ChatService {
 	return &serv{
 		chatRepository: chatRepository,
 	}

@@ -21,6 +21,6 @@ type repo struct {
 }
 
 // Create Message repository
-func NewRepository(db db.Client) repository.MessageRepository {
+func NewMessageRepository(db db.Client) repository.MessageRepository {
 	return &repo{db: db}
 }
