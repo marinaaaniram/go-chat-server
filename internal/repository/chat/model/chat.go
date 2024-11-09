@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Repository Chat model
 type Chat struct {
 	ID        int64
 	Usernames []string

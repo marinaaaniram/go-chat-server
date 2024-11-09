@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Internal Message model
 type Message struct {
 	ID        int64
 	ChatId    int64

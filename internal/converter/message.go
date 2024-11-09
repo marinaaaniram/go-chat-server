@@ -7,6 +7,10 @@ import (
 
 // Convert desc SendRequest fields to internal Message model
 func FromDescToMessage(message *desc.SendRequest) *model.Message {
+	if message == nil {
+		return nil
+	}
+
 	return &model.Message{
 		ChatId: message.ChatId,
 		SentBy: message.SentBy,

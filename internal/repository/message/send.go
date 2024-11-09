@@ -14,6 +14,10 @@ import (
 
 // Send message in repository layer
 func (r *repo) Send(ctx context.Context, message *model.Message) error {
+	if message == nil {
+		return errors.ErrPointerIsNil("message")
+	}
+
 	builderInsert := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(chatId, sentBy, text).

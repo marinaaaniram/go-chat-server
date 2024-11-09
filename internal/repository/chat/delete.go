@@ -12,6 +12,10 @@ import (
 
 // Delete chat in repository layer
 func (r *repo) Delete(ctx context.Context, chat *model.Chat) error {
+	if chat == nil {
+		return errors.ErrPointerIsNil("chat")
+	}
+
 	builder := sq.Delete(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Where(sq.Eq{idColumn: chat.ID})

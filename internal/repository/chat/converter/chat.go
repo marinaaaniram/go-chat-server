@@ -7,6 +7,10 @@ import (
 
 // Convert Chat model repo to internal model
 func FromRepoToChat(chat *modelRepo.Chat) *model.Chat {
+	if chat == nil {
+		return nil
+	}
+
 	return &model.Chat{
 		ID:        chat.ID,
 		Usernames: chat.Usernames,

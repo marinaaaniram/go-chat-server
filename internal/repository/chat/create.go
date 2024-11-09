@@ -16,6 +16,10 @@ import (
 
 // Create chat in repository layer
 func (r *repo) Create(ctx context.Context, chat *model.Chat) (*model.Chat, error) {
+	if chat == nil {
+		return nil, errors.ErrPointerIsNil("chat")
+	}
+
 	builderInsert := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(usernamesColumn).
