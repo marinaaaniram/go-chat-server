@@ -1,28 +1,14 @@
 package converter
 
 import (
-	"google.golang.org/protobuf/types/known/timestamppb"
-
 	"github.com/marinaaaniram/go-chat-server/internal/model"
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 )
 
 // Convert Chat internal model to desc model
-func FromChatToDesc(chat *model.Chat) *desc.Chat {
-	if chat == nil {
-		return nil
-	}
-
-	var updatedAt *timestamppb.Timestamp
-	if chat.UpdatedAt.Valid {
-		updatedAt = timestamppb.New(chat.UpdatedAt.Time)
-	}
-
-	return &desc.Chat{
-		Id:        chat.ID,
-		Usernames: chat.Usernames,
-		CreatedAt: timestamppb.New(chat.CreatedAt),
-		UpdatedAt: updatedAt,
+func FromChatIdToDescCreate(id int64) *desc.CreateResponse {
+	return &desc.CreateResponse{
+		Id: id,
 	}
 }
 

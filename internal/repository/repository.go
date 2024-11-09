@@ -8,7 +8,7 @@ import (
 
 // Describe Chat repository interface
 type ChatRepository interface {
-	Create(ctx context.Context, chat *model.Chat) (*model.Chat, error)
+	Create(ctx context.Context, chat *model.Chat) (int64, error)
 	Delete(ctx context.Context, chat *model.Chat) error
 }
 

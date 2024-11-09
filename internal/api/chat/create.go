@@ -14,12 +14,10 @@ func (i *Implementation) Create(ctx context.Context, req *desc.CreateRequest) (*
 		return nil, errors.ErrPointerIsNil("req")
 	}
 
-	chatDesc, err := i.chatService.Create(ctx, converter.FromDescCreateToChat(req))
+	chatId, err := i.chatService.Create(ctx, converter.FromDescCreateToChat(req))
 	if err != nil {
 		return nil, err
 	}
 
-	return &desc.CreateResponse{
-		Chat: chatDesc,
-	}, nil
+	return converter.FromChatIdToDescCreate(chatId), nil
 }

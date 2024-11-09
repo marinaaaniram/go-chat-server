@@ -1,7 +1,6 @@
 package model
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -12,5 +11,5 @@ type Message struct {
 	SentBy    string
 	Text      string
 	CreatedAt time.Time
-	UpdatedAt sql.NullTime
+	UpdatedAt *time.Time
 }
