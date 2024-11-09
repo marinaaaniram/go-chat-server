@@ -39,9 +39,8 @@ func (r *repo) Send(ctx context.Context, message *model.Message) error {
 	if err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == "23503" {
 			return errors.ErrObjectNotFount("chat", message.ChatId)
-		} else {
-			return errors.ErrFailedToInsertQuery(err)
 		}
+		return errors.ErrFailedToInsertQuery(err)
 	}
 
 	return nil
