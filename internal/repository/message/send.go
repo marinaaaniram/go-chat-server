@@ -2,14 +2,12 @@ package chat
 
 import (
 	"context"
-	"log"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgconn"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/marinaaaniram/go-chat-server/internal/client/db"
+	"github.com/marinaaaniram/go-chat-server/internal/errors"
 	"github.com/marinaaaniram/go-chat-server/internal/model"
 	modelRepo "github.com/marinaaaniram/go-chat-server/internal/repository/message/model"
 )
@@ -24,7 +22,7 @@ func (r *repo) Send(ctx context.Context, message *model.Message) error {
 
 	query, args, err := builderInsert.ToSql()
 	if err != nil {
-		return status.Errorf(codes.Internal, "Failed to build query: %v", err)
+		return errors.ErrFailedToBuildQuery(err)
 	}
 
 	q := db.Query{
@@ -36,13 +34,11 @@ func (r *repo) Send(ctx context.Context, message *model.Message) error {
 	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&messageRepo.ID)
 	if err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == "23503" {
-			return status.Errorf(codes.InvalidArgument, "Chat with id %d not found or %v", message.ChatId, err)
+			return errors.ErrObjectNotFount("chat", message.ChatId)
 		} else {
-			return status.Errorf(codes.Internal, "Failed to insert message: %v", err)
+			return errors.ErrFailedToInsertQuery(err)
 		}
 	}
-
-	log.Printf("Sent message with id: %d", messageRepo.ID)
 
 	return nil
 }
