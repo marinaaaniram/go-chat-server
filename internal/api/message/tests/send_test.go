@@ -18,7 +18,7 @@ import (
 	desc "github.com/marinaaaniram/go-chat-server/pkg/message_v1"
 )
 
-func TestCreate(t *testing.T) {
+func TestApiMessageCreate(t *testing.T) {
 	t.Parallel()
 	type messageServiceMockFunc func(mc *minimock.Controller) service.MessageService
 
@@ -35,7 +35,7 @@ func TestCreate(t *testing.T) {
 		sendBy = gofakeit.Name()
 		text   = gofakeit.Sentence(10)
 
-		serviceErr = fmt.Errorf("service error")
+		serviceErr = fmt.Errorf("Service error")
 
 		serviceReq = &model.Message{
 			ChatId: chatId,
@@ -62,7 +62,7 @@ func TestCreate(t *testing.T) {
 		messageServiceMock messageServiceMockFunc
 	}{
 		{
-			name: "success case",
+			name: "Success case",
 			args: args{
 				ctx: ctx,
 				req: req,
@@ -76,7 +76,7 @@ func TestCreate(t *testing.T) {
 			},
 		},
 		{
-			name: "api nil pointer",
+			name: "Api nil pointer",
 			args: args{
 				ctx: ctx,
 				req: nil,
@@ -88,7 +88,7 @@ func TestCreate(t *testing.T) {
 			},
 		},
 		{
-			name: "service error case",
+			name: "Service error case",
 			args: args{
 				ctx: ctx,
 				req: req,

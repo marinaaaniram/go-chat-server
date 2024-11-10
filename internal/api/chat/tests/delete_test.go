@@ -18,7 +18,7 @@ import (
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 )
 
-func TestDelete(t *testing.T) {
+func TestApiChatDelete(t *testing.T) {
 	t.Parallel()
 	type chatServiceMockFunc func(mc *minimock.Controller) service.ChatService
 
@@ -33,7 +33,7 @@ func TestDelete(t *testing.T) {
 
 		id = gofakeit.Int64()
 
-		serviceErr = fmt.Errorf("service error")
+		serviceErr = fmt.Errorf("Service error")
 
 		serviceReq = &model.Chat{
 			ID: id,
@@ -56,7 +56,7 @@ func TestDelete(t *testing.T) {
 		chatServiceMock chatServiceMockFunc
 	}{
 		{
-			name: "success case",
+			name: "Success case",
 			args: args{
 				ctx: ctx,
 				req: req,
@@ -70,7 +70,7 @@ func TestDelete(t *testing.T) {
 			},
 		},
 		{
-			name: "api nil pointer",
+			name: "Api nil pointer",
 			args: args{
 				ctx: ctx,
 				req: nil,
@@ -82,7 +82,7 @@ func TestDelete(t *testing.T) {
 			},
 		},
 		{
-			name: "service error case",
+			name: "Service error case",
 			args: args{
 				ctx: ctx,
 				req: req,

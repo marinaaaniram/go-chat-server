@@ -16,7 +16,7 @@ import (
 	"github.com/marinaaaniram/go-chat-server/internal/service/message"
 )
 
-func TestSend(t *testing.T) {
+func TestServiceMessageSend(t *testing.T) {
 	t.Parallel()
 	type messageRepositoryMockFunc func(mc *minimock.Controller) repository.MessageRepository
 

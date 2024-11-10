@@ -17,7 +17,7 @@ import (
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 )
 
-func TestCreate(t *testing.T) {
+func TestApiChatCreate(t *testing.T) {
 	t.Parallel()
 	type chatServiceMockFunc func(mc *minimock.Controller) service.ChatService
 
@@ -39,7 +39,7 @@ func TestCreate(t *testing.T) {
 
 		id = gofakeit.Int64()
 
-		serviceErr = fmt.Errorf("service error")
+		serviceErr = fmt.Errorf("Service error")
 
 		serviceReq = &model.Chat{
 			Usernames: usernames,
@@ -64,7 +64,7 @@ func TestCreate(t *testing.T) {
 		chatServiceMock chatServiceMockFunc
 	}{
 		{
-			name: "success case",
+			name: "Success case",
 			args: args{
 				ctx: ctx,
 				req: req,
@@ -78,7 +78,7 @@ func TestCreate(t *testing.T) {
 			},
 		},
 		{
-			name: "api nil pointer",
+			name: "Api nil pointer",
 			args: args{
 				ctx: ctx,
 				req: nil,
@@ -90,7 +90,7 @@ func TestCreate(t *testing.T) {
 			},
 		},
 		{
-			name: "service error case",
+			name: "Service error case",
 			args: args{
 				ctx: ctx,
 				req: req,

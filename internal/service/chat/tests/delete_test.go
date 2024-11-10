@@ -16,7 +16,7 @@ import (
 	"github.com/marinaaaniram/go-chat-server/internal/service/chat"
 )
 
-func TestDelete(t *testing.T) {
+func TestServiceChatDelete(t *testing.T) {
 	t.Parallel()
 	type chatRepositoryMockFunc func(mc *minimock.Controller) repository.ChatRepository
 
