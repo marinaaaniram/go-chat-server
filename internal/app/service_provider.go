@@ -4,6 +4,11 @@ import (
 	"context"
 	"log"
 
+	"github.com/marinaaaniram/go-common-platform/pkg/closer"
+	"github.com/marinaaaniram/go-common-platform/pkg/db"
+	"github.com/marinaaaniram/go-common-platform/pkg/db/pg"
+	"github.com/marinaaaniram/go-common-platform/pkg/db/transaction"
+
 	"github.com/marinaaaniram/go-chat-server/internal/api/chat"
 	"github.com/marinaaaniram/go-chat-server/internal/api/message"
 	"github.com/marinaaaniram/go-chat-server/internal/config"
@@ -13,10 +18,6 @@ import (
 	"github.com/marinaaaniram/go-chat-server/internal/service"
 	chatService "github.com/marinaaaniram/go-chat-server/internal/service/chat"
 	messageService "github.com/marinaaaniram/go-chat-server/internal/service/message"
-	"github.com/marinaaaniram/go-common-platform/pkg/closer"
-	"github.com/marinaaaniram/go-common-platform/pkg/db"
-	"github.com/marinaaaniram/go-common-platform/pkg/db/pg"
-	"github.com/marinaaaniram/go-common-platform/pkg/db/transaction"
 )
 
 type serviceProvider struct {

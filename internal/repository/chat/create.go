@@ -6,10 +6,10 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/lib/pq"
+	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
 	"github.com/marinaaaniram/go-chat-server/internal/errors"
 	"github.com/marinaaaniram/go-chat-server/internal/model"
-	"github.com/marinaaaniram/go-common-platform/pkg/db"
 )
 
 // Create chat in repository layer

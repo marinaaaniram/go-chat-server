@@ -5,11 +5,11 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgconn"
+	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
 	"github.com/marinaaaniram/go-chat-server/internal/errors"
 	"github.com/marinaaaniram/go-chat-server/internal/model"
 	modelRepo "github.com/marinaaaniram/go-chat-server/internal/repository/message/model"
-	"github.com/marinaaaniram/go-common-platform/pkg/db"
 )
 
 // Send message in repository layer

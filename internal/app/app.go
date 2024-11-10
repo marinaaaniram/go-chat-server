@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/marinaaaniram/go-common-platform/pkg/closer"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
@@ -12,7 +13,6 @@ import (
 	"github.com/marinaaaniram/go-chat-server/internal/config"
 	descChat_v1 "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 	descMessage_v1 "github.com/marinaaaniram/go-chat-server/pkg/message_v1"
-	"github.com/marinaaaniram/go-common-platform/pkg/closer"
 )
 
 type App struct {
