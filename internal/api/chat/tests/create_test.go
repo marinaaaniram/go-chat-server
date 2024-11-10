@@ -37,7 +37,6 @@ func TestCreate(t *testing.T) {
 		ctx = context.Background()
 		mc  = minimock.NewController(t)
 
-		// usernames []string
 		id = gofakeit.Int64()
 
 		serviceErr = fmt.Errorf("service error")

@@ -1,0 +1,111 @@
+package tests
+
+import (
+	"context"
+	"fmt"
+	"testing"
+
+	"github.com/brianvoe/gofakeit/v6"
+	"github.com/gojuno/minimock/v3"
+	"github.com/stretchr/testify/require"
+
+	"github.com/marinaaaniram/go-chat-server/internal/errors"
+	"github.com/marinaaaniram/go-chat-server/internal/model"
+	"github.com/marinaaaniram/go-chat-server/internal/repository"
+	repoMocks "github.com/marinaaaniram/go-chat-server/internal/repository/mocks"
+	"github.com/marinaaaniram/go-chat-server/internal/service/chat"
+)
+
+func TestCreate(t *testing.T) {
+	t.Parallel()
+	type chatRepositoryMockFunc func(mc *minimock.Controller) repository.ChatRepository
+
+	type args struct {
+		ctx context.Context
+		req *model.Chat
+	}
+
+	var usernames []string
+
+	for i := 0; i < 2; i++ {
+		name := gofakeit.Name()
+		usernames = append(usernames, name)
+	}
+
+	var (
+		ctx = context.Background()
+		mc  = minimock.NewController(t)
+
+		id = gofakeit.Int64()
+
+		repoErr = fmt.Errorf("Repo error")
+
+		req = &model.Chat{
+			Usernames: usernames,
+		}
+	)
+	defer t.Cleanup(mc.Finish)
+
+	tests := []struct {
+		name               string
+		args               args
+		want               int64
+		err                error
+		chatRepositoryMock chatRepositoryMockFunc
+	}{
+		{
+			name: "Success case",
+			args: args{
+				ctx: ctx,
+				req: req,
+			},
+			want: id,
+			err:  nil,
+			chatRepositoryMock: func(mc *minimock.Controller) repository.ChatRepository {
+				mock := repoMocks.NewChatRepositoryMock(mc)
+				mock.CreateMock.Expect(ctx, req).Return(id, nil)
+				return mock
+			},
+		},
+		{
+			name: "Api nil pointer",
+			args: args{
+				ctx: ctx,
+				req: nil,
+			},
+			want: 0,
+			err:  errors.ErrPointerIsNil("chat"),
+			chatRepositoryMock: func(mc *minimock.Controller) repository.ChatRepository {
+				return nil
+			},
+		},
+		{
+			name: "Service error case",
+			args: args{
+				ctx: ctx,
+				req: req,
+			},
+			want: 0,
+			err:  repoErr,
+			chatRepositoryMock: func(mc *minimock.Controller) repository.ChatRepository {
+				mock := repoMocks.NewChatRepositoryMock(mc)
+				mock.CreateMock.Expect(ctx, req).Return(0, repoErr)
+				return mock
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			chatRepoMock := tt.chatRepositoryMock(mc)
+			service := chat.NewChatService(chatRepoMock)
+
+			newID, err := service.Create(tt.args.ctx, tt.args.req)
+			require.Equal(t, tt.err, err)
+			require.Equal(t, tt.want, newID)
+		})
+	}
+}
