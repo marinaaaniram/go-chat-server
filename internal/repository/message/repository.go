@@ -1,7 +1,8 @@
 package chat
 
 import (
-	"github.com/marinaaaniram/go-chat-server/internal/client/db"
+	"github.com/marinaaaniram/go-common-platform/pkg/db"
+
 	"github.com/marinaaaniram/go-chat-server/internal/repository"
 )
 

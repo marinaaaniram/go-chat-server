@@ -4,12 +4,13 @@ import (
 	"context"
 	"log"
 
+	"github.com/marinaaaniram/go-common-platform/pkg/closer"
+	"github.com/marinaaaniram/go-common-platform/pkg/db"
+	"github.com/marinaaaniram/go-common-platform/pkg/db/pg"
+	"github.com/marinaaaniram/go-common-platform/pkg/db/transaction"
+
 	"github.com/marinaaaniram/go-chat-server/internal/api/chat"
 	"github.com/marinaaaniram/go-chat-server/internal/api/message"
-	"github.com/marinaaaniram/go-chat-server/internal/client/db"
-	"github.com/marinaaaniram/go-chat-server/internal/client/db/pg"
-	"github.com/marinaaaniram/go-chat-server/internal/client/db/transaction"
-	"github.com/marinaaaniram/go-chat-server/internal/closer"
 	"github.com/marinaaaniram/go-chat-server/internal/config"
 	"github.com/marinaaaniram/go-chat-server/internal/repository"
 	chatRepository "github.com/marinaaaniram/go-chat-server/internal/repository/chat"
