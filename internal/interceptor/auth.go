@@ -11,10 +11,12 @@ import (
 
 var authAddress string
 
+// Set go-auth service address from .env
 func SetAuthAddress(address string) {
 	authAddress = address
 }
 
+// Check auth in go-auth service
 func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	endpoint := info.FullMethod
 
