@@ -2,6 +2,10 @@ module github.com/marinaaaniram/go-chat-server
 
 go 1.22.5
 
+replace go-auth => ../go_auth
+
+require go-auth v0.0.0
+
 require (
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/brianvoe/gofakeit/v6 v6.28.0
@@ -11,9 +15,9 @@ require (
 	github.com/lib/pq v1.10.2
 	github.com/marinaaaniram/go-common-platform v0.0.0-20241110195851-754179088c4d
 	github.com/pkg/errors v0.9.1
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	google.golang.org/grpc v1.67.1
-	google.golang.org/protobuf v1.35.1
+	google.golang.org/protobuf v1.35.2
 )
 
 require (
@@ -34,6 +38,6 @@ require (
 	golang.org/x/net v0.30.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
 	golang.org/x/text v0.19.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240930140551-af27646dc61f // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20241021214115-324edc3d5d38 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

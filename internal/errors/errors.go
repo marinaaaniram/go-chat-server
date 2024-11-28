@@ -7,6 +7,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+var (
+	ErrInvalidAccessToken  = status.Errorf(codes.Aborted, "Invalid access token")
+	ErrMissingAccessToken  = status.Errorf(codes.Aborted, "Missing access token")
+	ErrAccessDenied        = status.Errorf(codes.Aborted, "Access denied")
+	ErrMetedataNotProvided = status.Errorf(codes.Aborted, "Metadata is not provided")
+)
+
 func ErrCanNotBeEmpty(argumentName string) error {
 	return status.Errorf(codes.Internal, fmt.Sprintf("%s cannot be empty", argumentName))
 }
@@ -29,4 +36,8 @@ func ErrFailedToDeleteQuery(argumentName error) error {
 
 func ErrObjectNotFount(objectName string, objectId int64) error {
 	return status.Errorf(codes.Internal, fmt.Sprintf("%s with id %d not found", objectName, objectId))
+}
+
+func ErrFailedConnectToService(argumentName error) error {
+	return status.Errorf(codes.Internal, fmt.Sprintf("Failed to connect to auth service: %v", argumentName))
 }
