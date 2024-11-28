@@ -1,8 +1,8 @@
 package chat
 
 import (
-	"github.com/marinaaaniram/go-chat-server/internal/service"
-	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
+	"go-chat-server/internal/service"
+	desc "go-chat-server/pkg/chat_v1"
 )
 
 type Implementation struct {

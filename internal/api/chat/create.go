@@ -3,9 +3,9 @@ package chat
 import (
 	"context"
 
-	"github.com/marinaaaniram/go-chat-server/internal/converter"
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
-	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
+	"go-chat-server/internal/converter"
+	"go-chat-server/internal/errors"
+	desc "go-chat-server/pkg/chat_v1"
 )
 
 // Create Chat in desc layer

@@ -1,4 +1,4 @@
-module github.com/marinaaaniram/go-chat-server
+module go-chat-server
 
 go 1.22.5
 

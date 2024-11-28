@@ -9,15 +9,15 @@ import (
 	"github.com/marinaaaniram/go-common-platform/pkg/db/pg"
 	"github.com/marinaaaniram/go-common-platform/pkg/db/transaction"
 
-	"github.com/marinaaaniram/go-chat-server/internal/api/chat"
-	"github.com/marinaaaniram/go-chat-server/internal/api/message"
-	"github.com/marinaaaniram/go-chat-server/internal/config"
-	"github.com/marinaaaniram/go-chat-server/internal/repository"
-	chatRepository "github.com/marinaaaniram/go-chat-server/internal/repository/chat"
-	messageRepository "github.com/marinaaaniram/go-chat-server/internal/repository/message"
-	"github.com/marinaaaniram/go-chat-server/internal/service"
-	chatService "github.com/marinaaaniram/go-chat-server/internal/service/chat"
-	messageService "github.com/marinaaaniram/go-chat-server/internal/service/message"
+	"go-chat-server/internal/api/chat"
+	"go-chat-server/internal/api/message"
+	"go-chat-server/internal/config"
+	"go-chat-server/internal/repository"
+	chatRepository "go-chat-server/internal/repository/chat"
+	messageRepository "go-chat-server/internal/repository/message"
+	"go-chat-server/internal/service"
+	chatService "go-chat-server/internal/service/chat"
+	messageService "go-chat-server/internal/service/message"
 )
 
 type serviceProvider struct {

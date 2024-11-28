@@ -3,8 +3,8 @@ package chat
 import (
 	"context"
 
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
-	"github.com/marinaaaniram/go-chat-server/internal/model"
+	"go-chat-server/internal/errors"
+	"go-chat-server/internal/model"
 )
 
 // Delete chat in service layer

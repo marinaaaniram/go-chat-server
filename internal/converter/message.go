@@ -1,8 +1,8 @@
 package converter
 
 import (
-	"github.com/marinaaaniram/go-chat-server/internal/model"
-	desc "github.com/marinaaaniram/go-chat-server/pkg/message_v1"
+	"go-chat-server/internal/model"
+	desc "go-chat-server/pkg/message_v1"
 )
 
 // Convert desc SendRequest fields to internal Message model

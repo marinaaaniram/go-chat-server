@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/marinaaaniram/go-chat-server/internal/repository.ChatRepository -o chat_repository_minimock.go -n ChatRepositoryMock -p mocks
+//go:generate minimock -i go-chat-server/internal/repository.ChatRepository -o chat_repository_minimock.go -n ChatRepositoryMock -p mocks
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"github.com/marinaaaniram/go-chat-server/internal/model"
+	"go-chat-server/internal/model"
 )
 
 // ChatRepositoryMock implements repository.ChatRepository

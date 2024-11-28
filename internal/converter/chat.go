@@ -1,8 +1,8 @@
 package converter
 
 import (
-	"github.com/marinaaaniram/go-chat-server/internal/model"
-	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
+	"go-chat-server/internal/model"
+	desc "go-chat-server/pkg/chat_v1"
 )
 
 // Convert Chat internal model to desc model

@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/marinaaaniram/go-chat-server/internal/model"
+	"go-chat-server/internal/model"
 )
 
 // Describe Chat repository interface

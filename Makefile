@@ -61,11 +61,11 @@ generate-mocks:
 
 test:
 	go clean -testcache
-	go test ./... -covermode count -coverpkg=github.com/marinaaaniram/go-chat-server/internal/... -count 5
+	go test ./... -covermode count -coverpkg=go-chat-server/internal/... -count 5
 
 test-coverage:
 	go clean -testcache
-	go test ./... -coverprofile=coverage.tmp.out -covermode count -coverpkg=github.com/marinaaaniram/go-chat-server/internal/... -count 5
+	go test ./... -coverprofile=coverage.tmp.out -covermode count -coverpkg=go-chat-server/internal/... -count 5
 	grep -v 'mocks\|config' coverage.tmp.out  > coverage.out
 	rm coverage.tmp.out
 	go tool cover -html=coverage.out;

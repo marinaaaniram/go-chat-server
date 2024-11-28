@@ -5,9 +5,9 @@ import (
 
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"github.com/marinaaaniram/go-chat-server/internal/converter"
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
-	desc "github.com/marinaaaniram/go-chat-server/pkg/message_v1"
+	"go-chat-server/internal/converter"
+	"go-chat-server/internal/errors"
+	desc "go-chat-server/pkg/message_v1"
 )
 
 // Update Message in desc layer

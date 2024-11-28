@@ -8,8 +8,8 @@ import (
 	"github.com/lib/pq"
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
-	"github.com/marinaaaniram/go-chat-server/internal/model"
+	"go-chat-server/internal/errors"
+	"go-chat-server/internal/model"
 )
 
 // Create chat in repository layer

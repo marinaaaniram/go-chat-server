@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/marinaaaniram/go-chat-server/internal/app"
+	"go-chat-server/internal/app"
 )
 
 func main() {

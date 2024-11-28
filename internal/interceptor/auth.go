@@ -4,7 +4,8 @@ import (
 	"context"
 	"go-auth/pkg/access_v1"
 
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
+	"go-chat-server/internal/errors"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )

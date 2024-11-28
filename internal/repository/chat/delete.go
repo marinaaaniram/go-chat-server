@@ -6,8 +6,8 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
-	"github.com/marinaaaniram/go-chat-server/internal/model"
+	"go-chat-server/internal/errors"
+	"go-chat-server/internal/model"
 )
 
 // Delete chat in repository layer
