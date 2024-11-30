@@ -22,6 +22,7 @@ get-deps:
 	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	go get -u github.com/marinaaaniram/go-common-platform@latest
+	go get -u github.com/marinaaaniram/go-auth@d7ead02d9995a68ccbf202a054d6e1d4c4be24d0
 	go mod tidy 
 
 generate:
@@ -61,11 +62,11 @@ generate-mocks:
 
 test:
 	go clean -testcache
-	go test ./... -covermode count -coverpkg=go-chat-server/internal/... -count 5
+	go test ./... -covermode count -coverpkg=github.com/marinaaaniram/go-chat-server/internal/... -count 5
 
 test-coverage:
 	go clean -testcache
-	go test ./... -coverprofile=coverage.tmp.out -covermode count -coverpkg=go-chat-server/internal/... -count 5
+	go test ./... -coverprofile=coverage.tmp.out -covermode count -coverpkg=github.com/marinaaaniram/go-chat-server/internal/... -count 5
 	grep -v 'mocks\|config' coverage.tmp.out  > coverage.out
 	rm coverage.tmp.out
 	go tool cover -html=coverage.out;

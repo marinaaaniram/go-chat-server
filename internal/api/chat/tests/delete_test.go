@@ -10,12 +10,12 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"go-chat-server/internal/api/chat"
-	"go-chat-server/internal/errors"
-	"go-chat-server/internal/model"
-	"go-chat-server/internal/service"
-	serviceMocks "go-chat-server/internal/service/mocks"
-	desc "go-chat-server/pkg/chat_v1"
+	"github.com/marinaaaniram/go-chat-server/internal/api/chat"
+	"github.com/marinaaaniram/go-chat-server/internal/errors"
+	"github.com/marinaaaniram/go-chat-server/internal/model"
+	"github.com/marinaaaniram/go-chat-server/internal/service"
+	serviceMocks "github.com/marinaaaniram/go-chat-server/internal/service/mocks"
+	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 )
 
 func TestApiChatDelete(t *testing.T) {

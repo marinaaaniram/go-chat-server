@@ -7,9 +7,9 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
-	"go-chat-server/internal/errors"
-	"go-chat-server/internal/model"
-	modelRepo "go-chat-server/internal/repository/message/model"
+	"github.com/marinaaaniram/go-chat-server/internal/errors"
+	"github.com/marinaaaniram/go-chat-server/internal/model"
+	modelRepo "github.com/marinaaaniram/go-chat-server/internal/repository/message/model"
 )
 
 // Send message in repository layer

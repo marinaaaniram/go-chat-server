@@ -3,8 +3,8 @@ package message
 import (
 	"context"
 
-	"go-chat-server/internal/errors"
-	"go-chat-server/internal/model"
+	"github.com/marinaaaniram/go-chat-server/internal/errors"
+	"github.com/marinaaaniram/go-chat-server/internal/model"
 )
 
 // Send message in service layer

@@ -3,7 +3,7 @@ package chat
 import (
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
-	"go-chat-server/internal/repository"
+	"github.com/marinaaaniram/go-chat-server/internal/repository"
 )
 
 const (

@@ -1,8 +1,8 @@
 package chat
 
 import (
-	"go-chat-server/internal/repository"
-	"go-chat-server/internal/service"
+	"github.com/marinaaaniram/go-chat-server/internal/repository"
+	"github.com/marinaaaniram/go-chat-server/internal/service"
 )
 
 type serv struct {

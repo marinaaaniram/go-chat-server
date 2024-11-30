@@ -2,12 +2,13 @@ package interceptor
 
 import (
 	"context"
-	"go-auth/pkg/access_v1"
-
-	"go-chat-server/internal/errors"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+
+	"github.com/marinaaaniram/go-auth/pkg/access_v1"
+
+	"github.com/marinaaaniram/go-chat-server/internal/errors"
 )
 
 var authAddress string

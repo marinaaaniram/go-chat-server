@@ -11,7 +11,7 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"go-chat-server/internal/model"
+	"github.com/marinaaaniram/go-chat-server/internal/model"
 )
 
 // MessageServiceMock implements service.MessageService

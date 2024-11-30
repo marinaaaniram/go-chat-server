@@ -1,18 +1,15 @@
-module go-chat-server
+module github.com/marinaaaniram/go-chat-server
 
 go 1.22.5
-
-replace go-auth => ../go_auth
-
-require go-auth v0.0.0
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/brianvoe/gofakeit/v6 v6.28.0
-	github.com/gojuno/minimock/v3 v3.4.2
+	github.com/gojuno/minimock/v3 v3.4.3
 	github.com/jackc/pgconn v1.14.3
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.2
+	github.com/marinaaaniram/go-auth v0.0.0-20241130204234-d7ead02d9995
 	github.com/marinaaaniram/go-common-platform v0.0.0-20241110195851-754179088c4d
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.9.0
@@ -23,6 +20,7 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/georgysavva/scany v1.2.2 // indirect
+	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect

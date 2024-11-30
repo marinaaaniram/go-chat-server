@@ -9,11 +9,11 @@ import (
 	"github.com/gojuno/minimock/v3"
 	"github.com/stretchr/testify/require"
 
-	"go-chat-server/internal/errors"
-	"go-chat-server/internal/model"
-	"go-chat-server/internal/repository"
-	repoMocks "go-chat-server/internal/repository/mocks"
-	"go-chat-server/internal/service/message"
+	"github.com/marinaaaniram/go-chat-server/internal/errors"
+	"github.com/marinaaaniram/go-chat-server/internal/model"
+	"github.com/marinaaaniram/go-chat-server/internal/repository"
+	repoMocks "github.com/marinaaaniram/go-chat-server/internal/repository/mocks"
+	"github.com/marinaaaniram/go-chat-server/internal/service/message"
 )
 
 func TestServiceMessageSend(t *testing.T) {
