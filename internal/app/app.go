@@ -2,18 +2,34 @@ package app
 
 import (
 	"context"
+	"flag"
 	"log"
 	"net"
+	"os"
 
+	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/marinaaaniram/go-common-platform/pkg/closer"
+	"github.com/natefinch/lumberjack"
+	"github.com/opentracing/opentracing-go"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 
 	"github.com/marinaaaniram/go-chat-server/internal/config"
 	"github.com/marinaaaniram/go-chat-server/internal/interceptor"
+	"github.com/marinaaaniram/go-chat-server/internal/logger"
+	"github.com/marinaaaniram/go-chat-server/internal/tracing"
 	descChat_v1 "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 	descMessage_v1 "github.com/marinaaaniram/go-chat-server/pkg/message_v1"
+)
+
+var logLevel = flag.String("l", "info", "log level")
+
+const (
+	serviceName = "github.com/marinaaaniram/go-chat-server"
 )
 
 type App struct {
@@ -51,6 +67,9 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initGRPCServer,
 	}
 
+	logger.Init(getCore(getAtomicLevel()))
+	tracing.Init(logger.Logger(), serviceName)
+
 	for _, f := range inits {
 		err := f(ctx)
 		if err != nil {
@@ -85,7 +104,12 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 
 	a.grpcServer = grpc.NewServer(
 		grpc.Creds(insecure.NewCredentials()),
-		grpc.UnaryInterceptor(interceptor.AuthInterceptor),
+		grpc.UnaryInterceptor(
+			grpcMiddleware.ChainUnaryServer(
+				otgrpc.OpenTracingServerInterceptor(opentracing.GlobalTracer()),
+				interceptor.ServerTracingInterceptor,
+				interceptor.AuthInterceptor,
+			)),
 	)
 
 	reflection.Register(a.grpcServer)
@@ -111,4 +135,39 @@ func (a *App) runGRPCServer() error {
 	}
 
 	return nil
+}
+
+func getCore(level zap.AtomicLevel) zapcore.Core {
+	stdout := zapcore.AddSync(os.Stdout)
+
+	file := zapcore.AddSync(&lumberjack.Logger{
+		Filename:   "logs/app.log",
+		MaxSize:    10, // megabytes
+		MaxBackups: 3,
+		MaxAge:     7, // days
+	})
+
+	productionCfg := zap.NewProductionEncoderConfig()
+	productionCfg.TimeKey = "timestamp"
+	productionCfg.EncodeTime = zapcore.ISO8601TimeEncoder
+
+	developmentCfg := zap.NewDevelopmentEncoderConfig()
+	developmentCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
+
+	consoleEncoder := zapcore.NewConsoleEncoder(developmentCfg)
+	fileEncoder := zapcore.NewJSONEncoder(productionCfg)
+
+	return zapcore.NewTee(
+		zapcore.NewCore(consoleEncoder, stdout, level),
+		zapcore.NewCore(fileEncoder, file, level),
+	)
+}
+
+func getAtomicLevel() zap.AtomicLevel {
+	var level zapcore.Level
+	if err := level.Set(*logLevel); err != nil {
+		log.Fatalf("failed to set log level: %v", err)
+	}
+
+	return zap.NewAtomicLevelAt(level)
 }
