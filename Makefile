@@ -22,6 +22,7 @@ get-deps:
 	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	go get -u github.com/marinaaaniram/go-common-platform@latest
+	go get -u github.com/marinaaaniram/go-auth@d7ead02d9995a68ccbf202a054d6e1d4c4be24d0 # todo change lo latesl after release
 	go mod tidy 
 
 generate:

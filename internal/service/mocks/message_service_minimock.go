@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/marinaaaniram/go-chat-server/internal/service.MessageService -o message_service_minimock.go -n MessageServiceMock -p mocks
+//go:generate minimock -i go-chat-server/internal/service.MessageService -o message_service_minimock.go -n MessageServiceMock -p mocks
 
 import (
 	"context"

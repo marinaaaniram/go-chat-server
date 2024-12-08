@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/marinaaaniram/go-chat-server/internal/config"
+	"github.com/marinaaaniram/go-chat-server/internal/interceptor"
 	descChat_v1 "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 	descMessage_v1 "github.com/marinaaaniram/go-chat-server/pkg/message_v1"
 )
@@ -78,7 +79,14 @@ func (a *App) initServiceProvider(_ context.Context) error {
 
 // Init GRPC server
 func (a *App) initGRPCServer(ctx context.Context) error {
-	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
+
+	authAddress := a.serviceProvider.GetGRPCConfig().AuthServiceAddress()
+	interceptor.SetAuthAddress(authAddress)
+
+	a.grpcServer = grpc.NewServer(
+		grpc.Creds(insecure.NewCredentials()),
+		grpc.UnaryInterceptor(interceptor.AuthInterceptor),
+	)
 
 	reflection.Register(a.grpcServer)
 
