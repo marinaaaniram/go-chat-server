@@ -20,6 +20,7 @@ import (
 
 	"github.com/marinaaaniram/go-chat-server/internal/config"
 	"github.com/marinaaaniram/go-chat-server/internal/interceptor"
+
 	"github.com/marinaaaniram/go-chat-server/internal/logger"
 	"github.com/marinaaaniram/go-chat-server/internal/tracing"
 	descChat_v1 "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"

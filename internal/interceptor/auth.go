@@ -8,8 +8,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/marinaaaniram/go-auth/pkg/access_v1"
 	"github.com/opentracing/opentracing-go"
+
+	"github.com/marinaaaniram/go-auth/pkg/access_v1"
 
 	"github.com/marinaaaniram/go-chat-server/internal/errors"
 )
@@ -48,6 +49,7 @@ func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServe
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(opentracing.GlobalTracer())),
 	)
+
 	if err != nil {
 		return nil, errors.ErrFailedConnectToService(err)
 	}
