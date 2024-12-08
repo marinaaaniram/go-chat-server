@@ -9,7 +9,6 @@ import (
 	"github.com/gojuno/minimock/v3"
 	"github.com/stretchr/testify/require"
 
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
 	"github.com/marinaaaniram/go-chat-server/internal/model"
 	"github.com/marinaaaniram/go-chat-server/internal/repository"
 	repoMocks "github.com/marinaaaniram/go-chat-server/internal/repository/mocks"
@@ -19,17 +18,11 @@ import (
 func TestServiceChatCreate(t *testing.T) {
 	t.Parallel()
 	type chatRepositoryMockFunc func(mc *minimock.Controller) repository.ChatRepository
+	type messageRepositoryMockFunc func(mc *minimock.Controller) repository.MessageRepository
 
 	type args struct {
 		ctx context.Context
 		req *model.Chat
-	}
-
-	var usernames []string
-
-	for i := 0; i < 2; i++ {
-		name := gofakeit.Name()
-		usernames = append(usernames, name)
 	}
 
 	var (
@@ -39,57 +32,40 @@ func TestServiceChatCreate(t *testing.T) {
 		id = gofakeit.Int64()
 
 		repoErr = fmt.Errorf("Repo error")
-
-		req = &model.Chat{
-			Usernames: usernames,
-		}
 	)
 	defer t.Cleanup(mc.Finish)
 
 	tests := []struct {
-		name               string
-		args               args
-		want               int64
-		err                error
-		chatRepositoryMock chatRepositoryMockFunc
+		name                  string
+		args                  args
+		want                  int64
+		err                   error
+		chatRepositoryMock    chatRepositoryMockFunc
+		messageRepositoryMock messageRepositoryMockFunc
 	}{
 		{
 			name: "Success case",
 			args: args{
 				ctx: ctx,
-				req: req,
 			},
 			want: id,
 			err:  nil,
 			chatRepositoryMock: func(mc *minimock.Controller) repository.ChatRepository {
 				mock := repoMocks.NewChatRepositoryMock(mc)
-				mock.CreateMock.Expect(ctx, req).Return(id, nil)
+				mock.CreateMock.Expect(ctx).Return(id, nil)
 				return mock
-			},
-		},
-		{
-			name: "Api nil pointer",
-			args: args{
-				ctx: ctx,
-				req: nil,
-			},
-			want: 0,
-			err:  errors.ErrPointerIsNil("chat"),
-			chatRepositoryMock: func(mc *minimock.Controller) repository.ChatRepository {
-				return nil
 			},
 		},
 		{
 			name: "Service error case",
 			args: args{
 				ctx: ctx,
-				req: req,
 			},
 			want: 0,
 			err:  repoErr,
 			chatRepositoryMock: func(mc *minimock.Controller) repository.ChatRepository {
 				mock := repoMocks.NewChatRepositoryMock(mc)
-				mock.CreateMock.Expect(ctx, req).Return(0, repoErr)
+				mock.CreateMock.Expect(ctx).Return(0, repoErr)
 				return mock
 			},
 		},
@@ -101,9 +77,10 @@ func TestServiceChatCreate(t *testing.T) {
 			t.Parallel()
 
 			chatRepoMock := tt.chatRepositoryMock(mc)
-			service := chat.NewChatService(chatRepoMock)
+			messageRepoMock := tt.messageRepositoryMock(mc)
+			service := chat.NewChatService(chatRepoMock, messageRepoMock)
 
-			newID, err := service.Create(tt.args.ctx, tt.args.req)
+			newID, err := service.Create(tt.args.ctx)
 			require.Equal(t, tt.err, err)
 			require.Equal(t, tt.want, newID)
 		})

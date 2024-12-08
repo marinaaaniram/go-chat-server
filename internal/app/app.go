@@ -24,7 +24,6 @@ import (
 	"github.com/marinaaaniram/go-chat-server/internal/logger"
 	"github.com/marinaaaniram/go-chat-server/internal/tracing"
 	descChat_v1 "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
-	descMessage_v1 "github.com/marinaaaniram/go-chat-server/pkg/message_v1"
 )
 
 var logLevel = flag.String("l", "info", "log level")
@@ -116,7 +115,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 	reflection.Register(a.grpcServer)
 
 	descChat_v1.RegisterChatV1Server(a.grpcServer, a.serviceProvider.GetChatImpl(ctx))
-	descMessage_v1.RegisterMessageV1Server(a.grpcServer, a.serviceProvider.GetMessageImpl(ctx))
+	// descMessage_v1.RegisterMessageV1Server(a.grpcServer, a.serviceProvider.GetMessageImpl(ctx))
 
 	return nil
 }

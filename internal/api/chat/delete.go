@@ -5,7 +5,6 @@ import (
 
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"github.com/marinaaaniram/go-chat-server/internal/converter"
 	"github.com/marinaaaniram/go-chat-server/internal/errors"
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 )
@@ -16,7 +15,7 @@ func (i *Implementation) Delete(ctx context.Context, req *desc.DeleteRequest) (*
 		return nil, errors.ErrPointerIsNil("req")
 	}
 
-	err := i.chatService.Delete(ctx, converter.FromDescDeleteToChat(req))
+	err := i.chatService.Delete(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}

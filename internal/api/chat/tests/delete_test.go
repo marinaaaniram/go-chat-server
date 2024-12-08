@@ -11,8 +11,6 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/marinaaaniram/go-chat-server/internal/api/chat"
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
-	"github.com/marinaaaniram/go-chat-server/internal/model"
 	"github.com/marinaaaniram/go-chat-server/internal/service"
 	serviceMocks "github.com/marinaaaniram/go-chat-server/internal/service/mocks"
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
@@ -34,10 +32,6 @@ func TestApiChatDelete(t *testing.T) {
 		id = gofakeit.Int64()
 
 		serviceErr = fmt.Errorf("Service error")
-
-		serviceReq = &model.Chat{
-			ID: id,
-		}
 
 		req = &desc.DeleteRequest{
 			Id: id,
@@ -65,20 +59,8 @@ func TestApiChatDelete(t *testing.T) {
 			err:  nil,
 			chatServiceMock: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMocks.NewChatServiceMock(mc)
-				mock.DeleteMock.Expect(ctx, serviceReq).Return(nil)
+				mock.DeleteMock.Expect(ctx, id).Return(nil)
 				return mock
-			},
-		},
-		{
-			name: "Api nil pointer",
-			args: args{
-				ctx: ctx,
-				req: nil,
-			},
-			want: nil,
-			err:  errors.ErrPointerIsNil("req"),
-			chatServiceMock: func(mc *minimock.Controller) service.ChatService {
-				return nil
 			},
 		},
 		{
@@ -91,7 +73,7 @@ func TestApiChatDelete(t *testing.T) {
 			err:  serviceErr,
 			chatServiceMock: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMocks.NewChatServiceMock(mc)
-				mock.DeleteMock.Expect(ctx, serviceReq).Return(serviceErr)
+				mock.DeleteMock.Expect(ctx, id).Return(serviceErr)
 				return mock
 			},
 		},

@@ -10,14 +10,12 @@ import (
 	"github.com/marinaaaniram/go-common-platform/pkg/db/transaction"
 
 	"github.com/marinaaaniram/go-chat-server/internal/api/chat"
-	"github.com/marinaaaniram/go-chat-server/internal/api/message"
 	"github.com/marinaaaniram/go-chat-server/internal/config"
 	"github.com/marinaaaniram/go-chat-server/internal/repository"
 	chatRepository "github.com/marinaaaniram/go-chat-server/internal/repository/chat"
 	messageRepository "github.com/marinaaaniram/go-chat-server/internal/repository/message"
 	"github.com/marinaaaniram/go-chat-server/internal/service"
 	chatService "github.com/marinaaaniram/go-chat-server/internal/service/chat"
-	messageService "github.com/marinaaaniram/go-chat-server/internal/service/message"
 )
 
 type serviceProvider struct {
@@ -29,11 +27,9 @@ type serviceProvider struct {
 	chatRepository    repository.ChatRepository
 	messageRepository repository.MessageRepository
 
-	chatService    service.ChatService
-	messageService service.MessageService
+	chatService service.ChatService
 
-	chatImpl    *chat.Implementation
-	messageImpl *message.Implementation
+	chatImpl *chat.Implementation
 }
 
 func newServiceProvider() *serviceProvider {
@@ -109,7 +105,7 @@ func (s *serviceProvider) GetChatRepository(ctx context.Context) repository.Chat
 // Init Chat service
 func (s *serviceProvider) GetChatService(ctx context.Context) service.ChatService {
 	if s.chatService == nil {
-		s.chatService = chatService.NewChatService(s.GetChatRepository(ctx))
+		s.chatService = chatService.NewChatService(s.GetChatRepository(ctx), s.GetMessageRepository(ctx))
 	}
 
 	return s.chatService
@@ -134,19 +130,19 @@ func (s *serviceProvider) GetMessageRepository(ctx context.Context) repository.M
 }
 
 // Init Message service
-func (s *serviceProvider) GetMessageService(ctx context.Context) service.MessageService {
-	if s.messageService == nil {
-		s.messageService = messageService.NewMessageService(s.GetMessageRepository(ctx))
-	}
+// func (s *serviceProvider) GetMessageService(ctx context.Context) service.MessageService {
+// 	if s.messageService == nil {
+// 		s.messageService = messageService.NewMessageService(s.GetMessageRepository(ctx))
+// 	}
 
-	return s.messageService
-}
+// 	return s.messageService
+// }
 
 // Init Message implementaion
-func (s *serviceProvider) GetMessageImpl(ctx context.Context) *message.Implementation {
-	if s.messageImpl == nil {
-		s.messageImpl = message.NewMessageImplementation(s.GetMessageService(ctx))
-	}
+// func (s *serviceProvider) GetMessageImpl(ctx context.Context) *message.Implementation {
+// 	if s.messageImpl == nil {
+// 		s.messageImpl = message.NewMessageImplementation(s.GetMessageService(ctx))
+// 	}
 
-	return s.messageImpl
-}
+// 	return s.messageImpl
+// }

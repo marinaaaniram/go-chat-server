@@ -11,7 +11,6 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"github.com/marinaaaniram/go-chat-server/internal/model"
 )
 
 // ChatRepositoryMock implements mm_repository.ChatRepository
@@ -19,16 +18,16 @@ type ChatRepositoryMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcCreate          func(ctx context.Context, chat *model.Chat) (i1 int64, err error)
+	funcCreate          func(ctx context.Context) (i1 int64, err error)
 	funcCreateOrigin    string
-	inspectFuncCreate   func(ctx context.Context, chat *model.Chat)
+	inspectFuncCreate   func(ctx context.Context)
 	afterCreateCounter  uint64
 	beforeCreateCounter uint64
 	CreateMock          mChatRepositoryMockCreate
 
-	funcDelete          func(ctx context.Context, chat *model.Chat) (err error)
+	funcDelete          func(ctx context.Context, chatId int64) (err error)
 	funcDeleteOrigin    string
-	inspectFuncDelete   func(ctx context.Context, chat *model.Chat)
+	inspectFuncDelete   func(ctx context.Context, chatId int64)
 	afterDeleteCounter  uint64
 	beforeDeleteCounter uint64
 	DeleteMock          mChatRepositoryMockDelete
@@ -79,14 +78,12 @@ type ChatRepositoryMockCreateExpectation struct {
 
 // ChatRepositoryMockCreateParams contains parameters of the ChatRepository.Create
 type ChatRepositoryMockCreateParams struct {
-	ctx  context.Context
-	chat *model.Chat
+	ctx context.Context
 }
 
 // ChatRepositoryMockCreateParamPtrs contains pointers to parameters of the ChatRepository.Create
 type ChatRepositoryMockCreateParamPtrs struct {
-	ctx  *context.Context
-	chat **model.Chat
+	ctx *context.Context
 }
 
 // ChatRepositoryMockCreateResults contains results of the ChatRepository.Create
@@ -97,9 +94,8 @@ type ChatRepositoryMockCreateResults struct {
 
 // ChatRepositoryMockCreateOrigins contains origins of expectations of the ChatRepository.Create
 type ChatRepositoryMockCreateExpectationOrigins struct {
-	origin     string
-	originCtx  string
-	originChat string
+	origin    string
+	originCtx string
 }
 
 // Marks this method to be optional. The default behavior of any method with Return() is '1 or more', meaning
@@ -113,7 +109,7 @@ func (mmCreate *mChatRepositoryMockCreate) Optional() *mChatRepositoryMockCreate
 }
 
 // Expect sets up expected params for ChatRepository.Create
-func (mmCreate *mChatRepositoryMockCreate) Expect(ctx context.Context, chat *model.Chat) *mChatRepositoryMockCreate {
+func (mmCreate *mChatRepositoryMockCreate) Expect(ctx context.Context) *mChatRepositoryMockCreate {
 	if mmCreate.mock.funcCreate != nil {
 		mmCreate.mock.t.Fatalf("ChatRepositoryMock.Create mock is already set by Set")
 	}
@@ -126,7 +122,7 @@ func (mmCreate *mChatRepositoryMockCreate) Expect(ctx context.Context, chat *mod
 		mmCreate.mock.t.Fatalf("ChatRepositoryMock.Create mock is already set by ExpectParams functions")
 	}
 
-	mmCreate.defaultExpectation.params = &ChatRepositoryMockCreateParams{ctx, chat}
+	mmCreate.defaultExpectation.params = &ChatRepositoryMockCreateParams{ctx}
 	mmCreate.defaultExpectation.expectationOrigins.origin = minimock.CallerInfo(1)
 	for _, e := range mmCreate.expectations {
 		if minimock.Equal(e.params, mmCreate.defaultExpectation.params) {
@@ -160,31 +156,8 @@ func (mmCreate *mChatRepositoryMockCreate) ExpectCtxParam1(ctx context.Context) 
 	return mmCreate
 }
 
-// ExpectChatParam2 sets up expected param chat for ChatRepository.Create
-func (mmCreate *mChatRepositoryMockCreate) ExpectChatParam2(chat *model.Chat) *mChatRepositoryMockCreate {
-	if mmCreate.mock.funcCreate != nil {
-		mmCreate.mock.t.Fatalf("ChatRepositoryMock.Create mock is already set by Set")
-	}
-
-	if mmCreate.defaultExpectation == nil {
-		mmCreate.defaultExpectation = &ChatRepositoryMockCreateExpectation{}
-	}
-
-	if mmCreate.defaultExpectation.params != nil {
-		mmCreate.mock.t.Fatalf("ChatRepositoryMock.Create mock is already set by Expect")
-	}
-
-	if mmCreate.defaultExpectation.paramPtrs == nil {
-		mmCreate.defaultExpectation.paramPtrs = &ChatRepositoryMockCreateParamPtrs{}
-	}
-	mmCreate.defaultExpectation.paramPtrs.chat = &chat
-	mmCreate.defaultExpectation.expectationOrigins.originChat = minimock.CallerInfo(1)
-
-	return mmCreate
-}
-
 // Inspect accepts an inspector function that has same arguments as the ChatRepository.Create
-func (mmCreate *mChatRepositoryMockCreate) Inspect(f func(ctx context.Context, chat *model.Chat)) *mChatRepositoryMockCreate {
+func (mmCreate *mChatRepositoryMockCreate) Inspect(f func(ctx context.Context)) *mChatRepositoryMockCreate {
 	if mmCreate.mock.inspectFuncCreate != nil {
 		mmCreate.mock.t.Fatalf("Inspect function is already set for ChatRepositoryMock.Create")
 	}
@@ -209,7 +182,7 @@ func (mmCreate *mChatRepositoryMockCreate) Return(i1 int64, err error) *ChatRepo
 }
 
 // Set uses given function f to mock the ChatRepository.Create method
-func (mmCreate *mChatRepositoryMockCreate) Set(f func(ctx context.Context, chat *model.Chat) (i1 int64, err error)) *ChatRepositoryMock {
+func (mmCreate *mChatRepositoryMockCreate) Set(f func(ctx context.Context) (i1 int64, err error)) *ChatRepositoryMock {
 	if mmCreate.defaultExpectation != nil {
 		mmCreate.mock.t.Fatalf("Default expectation is already set for the ChatRepository.Create method")
 	}
@@ -225,14 +198,14 @@ func (mmCreate *mChatRepositoryMockCreate) Set(f func(ctx context.Context, chat 
 
 // When sets expectation for the ChatRepository.Create which will trigger the result defined by the following
 // Then helper
-func (mmCreate *mChatRepositoryMockCreate) When(ctx context.Context, chat *model.Chat) *ChatRepositoryMockCreateExpectation {
+func (mmCreate *mChatRepositoryMockCreate) When(ctx context.Context) *ChatRepositoryMockCreateExpectation {
 	if mmCreate.mock.funcCreate != nil {
 		mmCreate.mock.t.Fatalf("ChatRepositoryMock.Create mock is already set by Set")
 	}
 
 	expectation := &ChatRepositoryMockCreateExpectation{
 		mock:               mmCreate.mock,
-		params:             &ChatRepositoryMockCreateParams{ctx, chat},
+		params:             &ChatRepositoryMockCreateParams{ctx},
 		expectationOrigins: ChatRepositoryMockCreateExpectationOrigins{origin: minimock.CallerInfo(1)},
 	}
 	mmCreate.expectations = append(mmCreate.expectations, expectation)
@@ -267,17 +240,17 @@ func (mmCreate *mChatRepositoryMockCreate) invocationsDone() bool {
 }
 
 // Create implements mm_repository.ChatRepository
-func (mmCreate *ChatRepositoryMock) Create(ctx context.Context, chat *model.Chat) (i1 int64, err error) {
+func (mmCreate *ChatRepositoryMock) Create(ctx context.Context) (i1 int64, err error) {
 	mm_atomic.AddUint64(&mmCreate.beforeCreateCounter, 1)
 	defer mm_atomic.AddUint64(&mmCreate.afterCreateCounter, 1)
 
 	mmCreate.t.Helper()
 
 	if mmCreate.inspectFuncCreate != nil {
-		mmCreate.inspectFuncCreate(ctx, chat)
+		mmCreate.inspectFuncCreate(ctx)
 	}
 
-	mm_params := ChatRepositoryMockCreateParams{ctx, chat}
+	mm_params := ChatRepositoryMockCreateParams{ctx}
 
 	// Record call args
 	mmCreate.CreateMock.mutex.Lock()
@@ -296,18 +269,13 @@ func (mmCreate *ChatRepositoryMock) Create(ctx context.Context, chat *model.Chat
 		mm_want := mmCreate.CreateMock.defaultExpectation.params
 		mm_want_ptrs := mmCreate.CreateMock.defaultExpectation.paramPtrs
 
-		mm_got := ChatRepositoryMockCreateParams{ctx, chat}
+		mm_got := ChatRepositoryMockCreateParams{ctx}
 
 		if mm_want_ptrs != nil {
 
 			if mm_want_ptrs.ctx != nil && !minimock.Equal(*mm_want_ptrs.ctx, mm_got.ctx) {
 				mmCreate.t.Errorf("ChatRepositoryMock.Create got unexpected parameter ctx, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
 					mmCreate.CreateMock.defaultExpectation.expectationOrigins.originCtx, *mm_want_ptrs.ctx, mm_got.ctx, minimock.Diff(*mm_want_ptrs.ctx, mm_got.ctx))
-			}
-
-			if mm_want_ptrs.chat != nil && !minimock.Equal(*mm_want_ptrs.chat, mm_got.chat) {
-				mmCreate.t.Errorf("ChatRepositoryMock.Create got unexpected parameter chat, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
-					mmCreate.CreateMock.defaultExpectation.expectationOrigins.originChat, *mm_want_ptrs.chat, mm_got.chat, minimock.Diff(*mm_want_ptrs.chat, mm_got.chat))
 			}
 
 		} else if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
@@ -322,9 +290,9 @@ func (mmCreate *ChatRepositoryMock) Create(ctx context.Context, chat *model.Chat
 		return (*mm_results).i1, (*mm_results).err
 	}
 	if mmCreate.funcCreate != nil {
-		return mmCreate.funcCreate(ctx, chat)
+		return mmCreate.funcCreate(ctx)
 	}
-	mmCreate.t.Fatalf("Unexpected call to ChatRepositoryMock.Create. %v %v", ctx, chat)
+	mmCreate.t.Fatalf("Unexpected call to ChatRepositoryMock.Create. %v", ctx)
 	return
 }
 
@@ -422,14 +390,14 @@ type ChatRepositoryMockDeleteExpectation struct {
 
 // ChatRepositoryMockDeleteParams contains parameters of the ChatRepository.Delete
 type ChatRepositoryMockDeleteParams struct {
-	ctx  context.Context
-	chat *model.Chat
+	ctx    context.Context
+	chatId int64
 }
 
 // ChatRepositoryMockDeleteParamPtrs contains pointers to parameters of the ChatRepository.Delete
 type ChatRepositoryMockDeleteParamPtrs struct {
-	ctx  *context.Context
-	chat **model.Chat
+	ctx    *context.Context
+	chatId *int64
 }
 
 // ChatRepositoryMockDeleteResults contains results of the ChatRepository.Delete
@@ -439,9 +407,9 @@ type ChatRepositoryMockDeleteResults struct {
 
 // ChatRepositoryMockDeleteOrigins contains origins of expectations of the ChatRepository.Delete
 type ChatRepositoryMockDeleteExpectationOrigins struct {
-	origin     string
-	originCtx  string
-	originChat string
+	origin       string
+	originCtx    string
+	originChatId string
 }
 
 // Marks this method to be optional. The default behavior of any method with Return() is '1 or more', meaning
@@ -455,7 +423,7 @@ func (mmDelete *mChatRepositoryMockDelete) Optional() *mChatRepositoryMockDelete
 }
 
 // Expect sets up expected params for ChatRepository.Delete
-func (mmDelete *mChatRepositoryMockDelete) Expect(ctx context.Context, chat *model.Chat) *mChatRepositoryMockDelete {
+func (mmDelete *mChatRepositoryMockDelete) Expect(ctx context.Context, chatId int64) *mChatRepositoryMockDelete {
 	if mmDelete.mock.funcDelete != nil {
 		mmDelete.mock.t.Fatalf("ChatRepositoryMock.Delete mock is already set by Set")
 	}
@@ -468,7 +436,7 @@ func (mmDelete *mChatRepositoryMockDelete) Expect(ctx context.Context, chat *mod
 		mmDelete.mock.t.Fatalf("ChatRepositoryMock.Delete mock is already set by ExpectParams functions")
 	}
 
-	mmDelete.defaultExpectation.params = &ChatRepositoryMockDeleteParams{ctx, chat}
+	mmDelete.defaultExpectation.params = &ChatRepositoryMockDeleteParams{ctx, chatId}
 	mmDelete.defaultExpectation.expectationOrigins.origin = minimock.CallerInfo(1)
 	for _, e := range mmDelete.expectations {
 		if minimock.Equal(e.params, mmDelete.defaultExpectation.params) {
@@ -502,8 +470,8 @@ func (mmDelete *mChatRepositoryMockDelete) ExpectCtxParam1(ctx context.Context) 
 	return mmDelete
 }
 
-// ExpectChatParam2 sets up expected param chat for ChatRepository.Delete
-func (mmDelete *mChatRepositoryMockDelete) ExpectChatParam2(chat *model.Chat) *mChatRepositoryMockDelete {
+// ExpectChatIdParam2 sets up expected param chatId for ChatRepository.Delete
+func (mmDelete *mChatRepositoryMockDelete) ExpectChatIdParam2(chatId int64) *mChatRepositoryMockDelete {
 	if mmDelete.mock.funcDelete != nil {
 		mmDelete.mock.t.Fatalf("ChatRepositoryMock.Delete mock is already set by Set")
 	}
@@ -519,14 +487,14 @@ func (mmDelete *mChatRepositoryMockDelete) ExpectChatParam2(chat *model.Chat) *m
 	if mmDelete.defaultExpectation.paramPtrs == nil {
 		mmDelete.defaultExpectation.paramPtrs = &ChatRepositoryMockDeleteParamPtrs{}
 	}
-	mmDelete.defaultExpectation.paramPtrs.chat = &chat
-	mmDelete.defaultExpectation.expectationOrigins.originChat = minimock.CallerInfo(1)
+	mmDelete.defaultExpectation.paramPtrs.chatId = &chatId
+	mmDelete.defaultExpectation.expectationOrigins.originChatId = minimock.CallerInfo(1)
 
 	return mmDelete
 }
 
 // Inspect accepts an inspector function that has same arguments as the ChatRepository.Delete
-func (mmDelete *mChatRepositoryMockDelete) Inspect(f func(ctx context.Context, chat *model.Chat)) *mChatRepositoryMockDelete {
+func (mmDelete *mChatRepositoryMockDelete) Inspect(f func(ctx context.Context, chatId int64)) *mChatRepositoryMockDelete {
 	if mmDelete.mock.inspectFuncDelete != nil {
 		mmDelete.mock.t.Fatalf("Inspect function is already set for ChatRepositoryMock.Delete")
 	}
@@ -551,7 +519,7 @@ func (mmDelete *mChatRepositoryMockDelete) Return(err error) *ChatRepositoryMock
 }
 
 // Set uses given function f to mock the ChatRepository.Delete method
-func (mmDelete *mChatRepositoryMockDelete) Set(f func(ctx context.Context, chat *model.Chat) (err error)) *ChatRepositoryMock {
+func (mmDelete *mChatRepositoryMockDelete) Set(f func(ctx context.Context, chatId int64) (err error)) *ChatRepositoryMock {
 	if mmDelete.defaultExpectation != nil {
 		mmDelete.mock.t.Fatalf("Default expectation is already set for the ChatRepository.Delete method")
 	}
@@ -567,14 +535,14 @@ func (mmDelete *mChatRepositoryMockDelete) Set(f func(ctx context.Context, chat 
 
 // When sets expectation for the ChatRepository.Delete which will trigger the result defined by the following
 // Then helper
-func (mmDelete *mChatRepositoryMockDelete) When(ctx context.Context, chat *model.Chat) *ChatRepositoryMockDeleteExpectation {
+func (mmDelete *mChatRepositoryMockDelete) When(ctx context.Context, chatId int64) *ChatRepositoryMockDeleteExpectation {
 	if mmDelete.mock.funcDelete != nil {
 		mmDelete.mock.t.Fatalf("ChatRepositoryMock.Delete mock is already set by Set")
 	}
 
 	expectation := &ChatRepositoryMockDeleteExpectation{
 		mock:               mmDelete.mock,
-		params:             &ChatRepositoryMockDeleteParams{ctx, chat},
+		params:             &ChatRepositoryMockDeleteParams{ctx, chatId},
 		expectationOrigins: ChatRepositoryMockDeleteExpectationOrigins{origin: minimock.CallerInfo(1)},
 	}
 	mmDelete.expectations = append(mmDelete.expectations, expectation)
@@ -609,17 +577,17 @@ func (mmDelete *mChatRepositoryMockDelete) invocationsDone() bool {
 }
 
 // Delete implements mm_repository.ChatRepository
-func (mmDelete *ChatRepositoryMock) Delete(ctx context.Context, chat *model.Chat) (err error) {
+func (mmDelete *ChatRepositoryMock) Delete(ctx context.Context, chatId int64) (err error) {
 	mm_atomic.AddUint64(&mmDelete.beforeDeleteCounter, 1)
 	defer mm_atomic.AddUint64(&mmDelete.afterDeleteCounter, 1)
 
 	mmDelete.t.Helper()
 
 	if mmDelete.inspectFuncDelete != nil {
-		mmDelete.inspectFuncDelete(ctx, chat)
+		mmDelete.inspectFuncDelete(ctx, chatId)
 	}
 
-	mm_params := ChatRepositoryMockDeleteParams{ctx, chat}
+	mm_params := ChatRepositoryMockDeleteParams{ctx, chatId}
 
 	// Record call args
 	mmDelete.DeleteMock.mutex.Lock()
@@ -638,7 +606,7 @@ func (mmDelete *ChatRepositoryMock) Delete(ctx context.Context, chat *model.Chat
 		mm_want := mmDelete.DeleteMock.defaultExpectation.params
 		mm_want_ptrs := mmDelete.DeleteMock.defaultExpectation.paramPtrs
 
-		mm_got := ChatRepositoryMockDeleteParams{ctx, chat}
+		mm_got := ChatRepositoryMockDeleteParams{ctx, chatId}
 
 		if mm_want_ptrs != nil {
 
@@ -647,9 +615,9 @@ func (mmDelete *ChatRepositoryMock) Delete(ctx context.Context, chat *model.Chat
 					mmDelete.DeleteMock.defaultExpectation.expectationOrigins.originCtx, *mm_want_ptrs.ctx, mm_got.ctx, minimock.Diff(*mm_want_ptrs.ctx, mm_got.ctx))
 			}
 
-			if mm_want_ptrs.chat != nil && !minimock.Equal(*mm_want_ptrs.chat, mm_got.chat) {
-				mmDelete.t.Errorf("ChatRepositoryMock.Delete got unexpected parameter chat, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
-					mmDelete.DeleteMock.defaultExpectation.expectationOrigins.originChat, *mm_want_ptrs.chat, mm_got.chat, minimock.Diff(*mm_want_ptrs.chat, mm_got.chat))
+			if mm_want_ptrs.chatId != nil && !minimock.Equal(*mm_want_ptrs.chatId, mm_got.chatId) {
+				mmDelete.t.Errorf("ChatRepositoryMock.Delete got unexpected parameter chatId, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
+					mmDelete.DeleteMock.defaultExpectation.expectationOrigins.originChatId, *mm_want_ptrs.chatId, mm_got.chatId, minimock.Diff(*mm_want_ptrs.chatId, mm_got.chatId))
 			}
 
 		} else if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
@@ -664,9 +632,9 @@ func (mmDelete *ChatRepositoryMock) Delete(ctx context.Context, chat *model.Chat
 		return (*mm_results).err
 	}
 	if mmDelete.funcDelete != nil {
-		return mmDelete.funcDelete(ctx, chat)
+		return mmDelete.funcDelete(ctx, chatId)
 	}
-	mmDelete.t.Fatalf("Unexpected call to ChatRepositoryMock.Delete. %v %v", ctx, chat)
+	mmDelete.t.Fatalf("Unexpected call to ChatRepositoryMock.Delete. %v %v", ctx, chatId)
 	return
 }
 

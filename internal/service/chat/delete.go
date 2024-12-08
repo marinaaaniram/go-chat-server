@@ -2,18 +2,11 @@ package chat
 
 import (
 	"context"
-
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
-	"github.com/marinaaaniram/go-chat-server/internal/model"
 )
 
 // Delete chat in service layer
-func (s *serv) Delete(ctx context.Context, chat *model.Chat) error {
-	if chat == nil {
-		return errors.ErrPointerIsNil("chat")
-	}
-
-	err := s.chatRepository.Delete(ctx, chat)
+func (s *serv) Delete(ctx context.Context, chatId int64) error {
+	err := s.chatRepository.Delete(ctx, chatId)
 	if err != nil {
 		return err
 	}

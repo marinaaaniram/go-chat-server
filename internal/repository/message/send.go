@@ -21,7 +21,7 @@ func (r *repo) Send(ctx context.Context, message *model.Message) error {
 	builderInsert := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(chatId, sentBy, text).
-		Values(message.ChatId, message.SentBy, message.Text).
+		Values(message.ChatId, message.Username, message.Text).
 		Suffix("RETURNING id")
 
 	query, args, err := builderInsert.ToSql()

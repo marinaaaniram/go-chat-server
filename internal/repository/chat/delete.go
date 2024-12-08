@@ -7,18 +7,13 @@ import (
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
 	"github.com/marinaaaniram/go-chat-server/internal/errors"
-	"github.com/marinaaaniram/go-chat-server/internal/model"
 )
 
 // Delete chat in repository layer
-func (r *repo) Delete(ctx context.Context, chat *model.Chat) error {
-	if chat == nil {
-		return errors.ErrPointerIsNil("chat")
-	}
-
+func (r *repo) Delete(ctx context.Context, chatId int64) error {
 	builder := sq.Delete(tableName).
 		PlaceholderFormat(sq.Dollar).
-		Where(sq.Eq{idColumn: chat.ID})
+		Where(sq.Eq{idColumn: chatId})
 
 	query, args, err := builder.ToSql()
 	if err != nil {

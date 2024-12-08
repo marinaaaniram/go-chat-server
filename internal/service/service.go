@@ -8,11 +8,7 @@ import (
 
 // Describe Chat service interface
 type ChatService interface {
-	Create(ctx context.Context, chat *model.Chat) (int64, error)
-	Delete(ctx context.Context, chat *model.Chat) error
-}
-
-// Describe Mesaage service interface
-type MessageService interface {
-	Send(ctx context.Context, chat *model.Message) error
+	Create(ctx context.Context) (int64, error)
+	Delete(ctx context.Context, chatId int64) error
+	SendMessage(ctx context.Context, chat *model.Message) error
 }
