@@ -8,7 +8,8 @@ LOCAL_MIGRATION_DSN=$(MIGRATION_DSN)
 init:
 	go clean -modcache
 	make install-deps
-	make get-deps
+	rm -f go.sum 
+	go mod tidy 
 	make generate
 	make generate-mocks
 
@@ -17,14 +18,6 @@ install-deps:
 	GOBIN=$(LOCAL_BIN) go install -mod=mod google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 	GOBIN=$(LOCAL_BIN) go install github.com/pressly/goose/v3/cmd/goose@v3.14.0
 	GOBIN=$(LOCAL_BIN) go install github.com/gojuno/minimock/v3/cmd/minimock@latest
-
-get-deps:
-	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
-	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
-	go get -u github.com/marinaaaniram/go-common-platform@latest
-	go get -u github.com/marinaaaniram/go-auth@latest # todo change lo latesl after release week_6
-	go get github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc
-	go mod tidy 
 
 generate:
 	make generate-chat-api
