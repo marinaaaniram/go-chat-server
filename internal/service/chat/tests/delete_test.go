@@ -9,7 +9,6 @@ import (
 	"github.com/gojuno/minimock/v3"
 	"github.com/stretchr/testify/require"
 
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
 	"github.com/marinaaaniram/go-chat-server/internal/model"
 	"github.com/marinaaaniram/go-chat-server/internal/repository"
 	repoMocks "github.com/marinaaaniram/go-chat-server/internal/repository/mocks"
@@ -19,6 +18,7 @@ import (
 func TestServiceChatDelete(t *testing.T) {
 	t.Parallel()
 	type chatRepositoryMockFunc func(mc *minimock.Controller) repository.ChatRepository
+	type messageRepositoryMockFunc func(mc *minimock.Controller) repository.MessageRepository
 
 	type args struct {
 		ctx context.Context
@@ -32,57 +32,40 @@ func TestServiceChatDelete(t *testing.T) {
 		id = gofakeit.Int64()
 
 		repoErr = fmt.Errorf("Repo error")
-
-		req = &model.Chat{
-			ID: id,
-		}
 	)
 	defer t.Cleanup(mc.Finish)
 
 	tests := []struct {
-		name               string
-		args               args
-		want               int64
-		err                error
-		chatRepositoryMock chatRepositoryMockFunc
+		name                  string
+		args                  args
+		want                  int64
+		err                   error
+		chatRepositoryMock    chatRepositoryMockFunc
+		messageRepositoryMock messageRepositoryMockFunc
 	}{
 		{
 			name: "Success case",
 			args: args{
 				ctx: ctx,
-				req: req,
 			},
 			want: id,
 			err:  nil,
 			chatRepositoryMock: func(mc *minimock.Controller) repository.ChatRepository {
 				mock := repoMocks.NewChatRepositoryMock(mc)
-				mock.DeleteMock.Expect(ctx, req).Return(nil)
+				mock.DeleteMock.Expect(ctx, id).Return(nil)
 				return mock
-			},
-		},
-		{
-			name: "Api nil pointer",
-			args: args{
-				ctx: ctx,
-				req: nil,
-			},
-			want: 0,
-			err:  errors.ErrPointerIsNil("chat"),
-			chatRepositoryMock: func(mc *minimock.Controller) repository.ChatRepository {
-				return nil
 			},
 		},
 		{
 			name: "Service error case",
 			args: args{
 				ctx: ctx,
-				req: req,
 			},
 			want: 0,
 			err:  repoErr,
 			chatRepositoryMock: func(mc *minimock.Controller) repository.ChatRepository {
 				mock := repoMocks.NewChatRepositoryMock(mc)
-				mock.DeleteMock.Expect(ctx, req).Return(repoErr)
+				mock.DeleteMock.Expect(ctx, id).Return(repoErr)
 				return mock
 			},
 		},
@@ -94,9 +77,10 @@ func TestServiceChatDelete(t *testing.T) {
 			t.Parallel()
 
 			chatRepoMock := tt.chatRepositoryMock(mc)
-			service := chat.NewChatService(chatRepoMock)
+			messageRepoMock := tt.messageRepositoryMock(mc)
+			service := chat.NewChatService(chatRepoMock, messageRepoMock)
 
-			err := service.Delete(tt.args.ctx, tt.args.req)
+			err := service.Delete(tt.args.ctx, tt.args.req.ID)
 			require.Equal(t, tt.err, err)
 		})
 	}

@@ -1,4 +1,4 @@
-package message
+package chat
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 )
 
 // Send message in service layer
-func (s *serv) Send(ctx context.Context, message *model.Message) error {
+func (s *serv) SendMessage(ctx context.Context, message *model.Message) error {
 	if message == nil {
 		return errors.ErrPointerIsNil("message")
 	}

@@ -4,30 +4,26 @@ import (
 	"context"
 	"fmt"
 
-	sq "github.com/Masterminds/squirrel"
-	"github.com/lib/pq"
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
 	"github.com/marinaaaniram/go-chat-server/internal/errors"
-	"github.com/marinaaaniram/go-chat-server/internal/model"
 )
 
 // Create chat in repository layer
-func (r *repo) Create(ctx context.Context, chat *model.Chat) (int64, error) {
-	if chat == nil {
-		return 0, errors.ErrPointerIsNil("chat")
-	}
+func (r *repo) Create(ctx context.Context) (int64, error) {
+	// builderInsert :=
+	// 	sq.Insert(tableName).
+	// 		Columns(). // Нет необходимости указывать колонки, если они будут автогенерированы
+	// 		Values().  // Нет значений для автоинкрементного id
+	// 		PlaceholderFormat(sq.Dollar).
+	// 		Suffix("RETURNING id")
 
-	builderInsert := sq.Insert(tableName).
-		PlaceholderFormat(sq.Dollar).
-		Columns(usernamesColumn).
-		Values(pq.Array(chat.Usernames)).
-		Suffix(fmt.Sprintf("RETURNING %s", idColumn))
+	query := fmt.Sprintf("INSERT INTO %s DEFAULT VALUES RETURNING id", tableName)
 
-	query, args, err := builderInsert.ToSql()
-	if err != nil {
-		return 0, errors.ErrFailedToBuildQuery(err)
-	}
+	// query, args, err := builderInsert.ToSql()
+	// if err != nil {
+	// 	return 0, errors.ErrFailedToBuildQuery(err)
+	// }
 
 	q := db.Query{
 		Name:     "chat_repository.Create",
@@ -35,7 +31,7 @@ func (r *repo) Create(ctx context.Context, chat *model.Chat) (int64, error) {
 	}
 
 	var chatId int64
-	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&chatId)
+	err := r.db.DB().QueryRowContext(ctx, q).Scan(&chatId)
 	if err != nil {
 		return 0, errors.ErrFailedToInsertQuery(err)
 	}

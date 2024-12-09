@@ -3,21 +3,20 @@ package chat
 import (
 	"context"
 
-	"github.com/marinaaaniram/go-chat-server/internal/converter"
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // Create Chat in desc layer
-func (i *Implementation) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-	if req == nil {
-		return nil, errors.ErrPointerIsNil("req")
-	}
-
-	chatId, err := i.chatService.Create(ctx, converter.FromDescCreateToChat(req))
+func (i *Implementation) Create(ctx context.Context, _ *emptypb.Empty) (*desc.CreateResponse, error) {
+	chatId, err := i.chatService.Create(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return converter.FromChatIdToDescCreate(chatId), nil
+	i.channels[chatId] = make(chan *desc.Message, 100)
+
+	return &desc.CreateResponse{
+		Id: chatId,
+	}, nil
 }

@@ -3,8 +3,12 @@ package interceptor
 import (
 	"context"
 
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
+
+	"github.com/opentracing/opentracing-go"
 
 	"github.com/marinaaaniram/go-auth/pkg/access_v1"
 
@@ -36,7 +40,16 @@ func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServe
 	newMd := metadata.Pairs("endpoint", endpoint, "authorization", token)
 	ctx = metadata.NewOutgoingContext(ctx, newMd)
 
-	conn, err := grpc.Dial(authAddress, grpc.WithInsecure())
+	span, ctx := opentracing.StartSpanFromContext(ctx, "authorization")
+	defer span.Finish()
+	span.SetTag("req", req)
+
+	conn, err := grpc.Dial(
+		authAddress,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(opentracing.GlobalTracer())),
+	)
+
 	if err != nil {
 		return nil, errors.ErrFailedConnectToService(err)
 	}

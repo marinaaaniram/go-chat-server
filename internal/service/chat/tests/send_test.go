@@ -13,11 +13,12 @@ import (
 	"github.com/marinaaaniram/go-chat-server/internal/model"
 	"github.com/marinaaaniram/go-chat-server/internal/repository"
 	repoMocks "github.com/marinaaaniram/go-chat-server/internal/repository/mocks"
-	"github.com/marinaaaniram/go-chat-server/internal/service/message"
+	"github.com/marinaaaniram/go-chat-server/internal/service/chat"
 )
 
 func TestServiceMessageSend(t *testing.T) {
 	t.Parallel()
+	type chatRepositoryMockFunc func(mc *minimock.Controller) repository.ChatRepository
 	type messageRepositoryMockFunc func(mc *minimock.Controller) repository.MessageRepository
 
 	type args struct {
@@ -33,14 +34,14 @@ func TestServiceMessageSend(t *testing.T) {
 
 		repoErr = fmt.Errorf("Repo error")
 
-		chatId = gofakeit.Int64()
-		sendBy = gofakeit.Name()
-		text   = gofakeit.Sentence(10)
+		chatId   = gofakeit.Int64()
+		username = gofakeit.Name()
+		text     = gofakeit.Sentence(10)
 
 		req = &model.Message{
-			ChatId: chatId,
-			SentBy: sendBy,
-			Text:   text,
+			ChatId:   chatId,
+			Username: username,
+			Text:     text,
 		}
 	)
 	defer t.Cleanup(mc.Finish)
@@ -50,6 +51,7 @@ func TestServiceMessageSend(t *testing.T) {
 		args                  args
 		want                  int64
 		err                   error
+		chatRepositoryMock    chatRepositoryMockFunc
 		messageRepositoryMock messageRepositoryMockFunc
 	}{
 		{
@@ -99,10 +101,11 @@ func TestServiceMessageSend(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
+			chatRepoMock := tt.chatRepositoryMock(mc)
 			messageRepoMock := tt.messageRepositoryMock(mc)
-			service := message.NewMessageService(messageRepoMock)
+			service := chat.NewChatService(chatRepoMock, messageRepoMock)
 
-			err := service.Send(tt.args.ctx, tt.args.req)
+			err := service.SendMessage(tt.args.ctx, tt.args.req)
 			require.Equal(t, tt.err, err)
 		})
 	}

@@ -8,10 +8,9 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gojuno/minimock/v3"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/marinaaaniram/go-chat-server/internal/api/chat"
-	"github.com/marinaaaniram/go-chat-server/internal/errors"
-	"github.com/marinaaaniram/go-chat-server/internal/model"
 	"github.com/marinaaaniram/go-chat-server/internal/service"
 	serviceMocks "github.com/marinaaaniram/go-chat-server/internal/service/mocks"
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
@@ -23,14 +22,6 @@ func TestApiChatCreate(t *testing.T) {
 
 	type args struct {
 		ctx context.Context
-		req *desc.CreateRequest
-	}
-
-	var usernames []string
-
-	for i := 0; i < 2; i++ {
-		name := gofakeit.Name()
-		usernames = append(usernames, name)
 	}
 
 	var (
@@ -40,14 +31,6 @@ func TestApiChatCreate(t *testing.T) {
 		id = gofakeit.Int64()
 
 		serviceErr = fmt.Errorf("Service error")
-
-		serviceReq = &model.Chat{
-			Usernames: usernames,
-		}
-
-		req = &desc.CreateRequest{
-			Usernames: usernames,
-		}
 
 		res = &desc.CreateResponse{
 			Id: id,
@@ -67,39 +50,25 @@ func TestApiChatCreate(t *testing.T) {
 			name: "Success case",
 			args: args{
 				ctx: ctx,
-				req: req,
 			},
 			want: res,
 			err:  nil,
 			chatServiceMock: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMocks.NewChatServiceMock(mc)
-				mock.CreateMock.Expect(ctx, serviceReq).Return(id, nil)
+				mock.CreateMock.Expect(ctx).Return(id, nil)
 				return mock
-			},
-		},
-		{
-			name: "Api nil pointer",
-			args: args{
-				ctx: ctx,
-				req: nil,
-			},
-			want: nil,
-			err:  errors.ErrPointerIsNil("req"),
-			chatServiceMock: func(mc *minimock.Controller) service.ChatService {
-				return nil
 			},
 		},
 		{
 			name: "Service error case",
 			args: args{
 				ctx: ctx,
-				req: req,
 			},
 			want: nil,
 			err:  serviceErr,
 			chatServiceMock: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMocks.NewChatServiceMock(mc)
-				mock.CreateMock.Expect(ctx, serviceReq).Return(0, serviceErr)
+				mock.CreateMock.Expect(ctx).Return(0, serviceErr)
 				return mock
 			},
 		},
@@ -113,7 +82,7 @@ func TestApiChatCreate(t *testing.T) {
 			chatServiceMock := tt.chatServiceMock(mc)
 			api := chat.NewChatImplementation(chatServiceMock)
 
-			newID, err := api.Create(tt.args.ctx, tt.args.req)
+			newID, err := api.Create(tt.args.ctx, &emptypb.Empty{})
 			require.Equal(t, tt.err, err)
 			require.Equal(t, tt.want, newID)
 		})
