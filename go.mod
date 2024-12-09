@@ -11,7 +11,6 @@ require (
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/jackc/pgconn v1.14.3
 	github.com/joho/godotenv v1.5.1
-	github.com/lib/pq v1.10.2
 	github.com/marinaaaniram/go-auth v0.0.0-20241208135319-0a7bd268c061
 	github.com/marinaaaniram/go-common-platform v0.0.0-20241110195851-754179088c4d
 	github.com/natefinch/lumberjack v2.0.0+incompatible

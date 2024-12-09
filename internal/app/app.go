@@ -8,10 +8,8 @@ import (
 	"os"
 
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/marinaaaniram/go-common-platform/pkg/closer"
 	"github.com/natefinch/lumberjack"
-	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
@@ -106,8 +104,8 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 		grpc.Creds(insecure.NewCredentials()),
 		grpc.UnaryInterceptor(
 			grpcMiddleware.ChainUnaryServer(
-				otgrpc.OpenTracingServerInterceptor(opentracing.GlobalTracer()),
-				interceptor.ServerTracingInterceptor,
+				// otgrpc.OpenTracingServerInterceptor(opentracing.GlobalTracer()),
+				// interceptor.ServerTracingInterceptor,
 				interceptor.AuthInterceptor,
 			)),
 	)

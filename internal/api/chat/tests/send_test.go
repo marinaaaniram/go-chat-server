@@ -113,7 +113,7 @@ func TestApiMessageCreate(t *testing.T) {
 			chatServiceMock := tt.chatServiceMock(mc)
 			api := chat.NewChatImplementation(chatServiceMock)
 
-			newID, err := api.Send(tt.args.ctx, tt.args.req)
+			newID, err := api.SendMessage(tt.args.ctx, tt.args.req)
 			require.Equal(t, tt.err, err)
 			require.Equal(t, tt.want, newID)
 		})

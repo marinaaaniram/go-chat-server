@@ -10,8 +10,8 @@ import (
 	desc "github.com/marinaaaniram/go-chat-server/pkg/chat_v1"
 )
 
-// Update Message in desc layer
-func (i *Implementation) Send(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
+// SendMessage Chat in desc layer
+func (i *Implementation) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
 	if req == nil {
 		return nil, errors.ErrPointerIsNil("req")
 	}
